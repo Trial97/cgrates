@@ -855,6 +855,9 @@ const (
 	ApierV1GetRatingPlanIDs         = "ApierV1.GetRatingPlanIDs"
 	ApierV1GetRatingPlan            = "ApierV1.GetRatingPlan"
 	ApierV1RemoveRatingPlan         = "ApierV1.RemoveRatingPlan"
+	ApierV1AddBalance               = "ApierV1.AddBalance"
+	ApierV1DebitBalance             = "ApierV1.DebitBalance"
+	ApierV1SetAccount               = "ApierV1.SetAccount"
 )
 
 const (
@@ -864,6 +867,7 @@ const (
 	ApierV2GetAccount               = "ApierV2.GetAccount"
 	ApierV2SetAccount               = "ApierV2.SetAccount"
 	ApierV2CountCDRs                = "ApierV2.CountCDRs"
+	ApierV2SetBalance               = "ApierV2.SetBalance"
 )
 
 const (
