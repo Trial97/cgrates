@@ -20,8 +20,6 @@ package v1
 
 import (
 	"testing"
-
-	"github.com/cgrates/cgrates/engine"
 )
 
 func TestThresholdSv1Interface(t *testing.T) {
@@ -61,7 +59,7 @@ func TestSessionSv1Interface(t *testing.T) {
 
 func TestResponderInterface(t *testing.T) {
 	_ = ResponderInterface(NewDispatcherResponder(nil))
-	_ = ResponderInterface(&engine.Responder{})
+	// _ = ResponderInterface(&engine.Responder{})
 }
 
 func TestCacheSv1Interface(t *testing.T) {

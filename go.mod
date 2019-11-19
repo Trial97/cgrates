@@ -26,6 +26,7 @@ require (
 	github.com/fortytw2/leaktest v1.3.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.8-0.20190312181446-1485a34d5d57
 	github.com/go-sql-driver/mysql v1.4.1
+	github.com/gogo/protobuf v1.3.1
 	github.com/gorhill/cronexpr v0.0.0-20180427100037-88b0669f7d75
 	github.com/hashicorp/golang-lru v0.5.2-0.20190520140433-59383c442f7d // indirect
 	github.com/ishidawataru/sctp v0.0.0-20180918013207-6e2cb1366111 // indirect
@@ -46,11 +47,13 @@ require (
 	github.com/tidwall/pretty v1.0.0 // indirect
 	github.com/tinylib/msgp v1.1.0 // indirect
 	github.com/ugorji/go v0.0.0-20171112025056-5a66da2e74af
+	github.com/valyala/gorpc v0.0.0-20160519171614-908281bef774
 	github.com/xdg/stringprep v1.0.1-0.20180714160509-73f8eece6fdc // indirect
 	go.mongodb.org/mongo-driver v1.1.1
 	go.opencensus.io v0.22.1-0.20190713072201-b4a14686f0a9 // indirect
 	golang.org/x/net v0.0.0-20190909003024-a7b16738d86b
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/api v0.10.0
+	google.golang.org/grpc v1.21.1
 	pack.ag/amqp v0.12.2
 )

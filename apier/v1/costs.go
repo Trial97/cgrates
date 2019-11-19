@@ -56,8 +56,7 @@ func (apier *ApierV1) GetCost(attrs AttrGetCost, ec *engine.EventCost) error {
 		DurationIndex: usage,
 	}
 	var cc engine.CallCost
-	if err := apier.Responder.GetCost(&engine.CallDescriptorWithArgDispatcher{CallDescriptor: cd,
-		ArgDispatcher: attrs.ArgDispatcher}, &cc); err != nil {
+	if err := apier.Responder.GetCost(cd, &cc); err != nil {
 		return utils.NewErrServerError(err)
 	}
 	*ec = *engine.NewEventCostFromCallCost(&cc, "", "")
@@ -90,8 +89,7 @@ func (apier *ApierV1) GetDataCost(attrs AttrGetDataCost, reply *engine.DataCost)
 		TOR:           utils.DATA,
 	}
 	var cc engine.CallCost
-	if err := apier.Responder.GetCost(&engine.CallDescriptorWithArgDispatcher{CallDescriptor: cd,
-		ArgDispatcher: attrs.ArgDispatcher}, &cc); err != nil {
+	if err := apier.Responder.GetCost(cd, &cc); err != nil {
 		return utils.NewErrServerError(err)
 	}
 	if dc, err := cc.ToDataCost(); err != nil {
