@@ -10,16 +10,19 @@ import (
 type Responder struct {
 	r *engine.Responder
 }
-func NewResponder(r *engine.Responder)*Responder{
-	return &Responder{		r:r	}
+
+func NewResponder(r *engine.Responder) *Responder {
+	return &Responder{r: r}
 }
 
-func (r*Responder)GetCost(arg *CallDescriptor, reply *CallCost)error{
-	return r.r.GetCost(arg.Convert(),reply.Convert())
+func (r *Responder) GetCost(arg *CallDescriptor, reply *CallCost) error {
+	reply2 := new(engine.CallCost)
+	err := r.r.GetCost(arg.Convert(), reply2)
+	*reply = *NewCallCost(reply2)
+	return err
 }
 
-
-func ListenAndServeProtoRPC(address string,r *engine.Responder) error {
+func ListenAndServeProtoRPC(address string, r *engine.Responder) error {
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		return err
@@ -27,7 +30,7 @@ func ListenAndServeProtoRPC(address string,r *engine.Responder) error {
 	rpcServer := rpc.NewServer()
 	if err := rpcServer.Register(NewResponder(r)); err != nil {
 		return err
-	} 
+	}
 	for {
 		conn, err := listener.Accept()
 		if err != nil {

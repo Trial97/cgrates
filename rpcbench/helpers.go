@@ -27,6 +27,9 @@ func (bs *BalanceSummary) Convert() *engine.BalanceSummary {
 }
 
 func NewAccountSummary(as *engine.AccountSummary) *AccountSummary {
+	if as == nil {
+		return nil
+	}
 	a := &AccountSummary{
 		Tenant:           as.Tenant,
 		ID:               as.ID,
@@ -223,6 +226,9 @@ func (r *RatingInfo) Convert() *engine.RatingInfo {
 }
 
 func NewUnitInfo(r *engine.UnitInfo) *UnitInfo {
+	if r == nil {
+		return nil
+	}
 	return &UnitInfo{
 		UUID:          r.UUID,
 		ID:            r.ID,
@@ -247,6 +253,9 @@ func (r *UnitInfo) Convert() *engine.UnitInfo {
 }
 
 func NewMonetaryInfo(r *engine.MonetaryInfo) *MonetaryInfo {
+	if r == nil {
+		return nil
+	}
 	return &MonetaryInfo{
 		UUID:         r.UUID,
 		ID:           r.ID,
@@ -281,6 +290,9 @@ func (r *DebitInfo) Convert() *engine.DebitInfo {
 }
 
 func NewIncrement(r *engine.Increment) *Increment {
+	if r == nil {
+		return nil
+	}
 	return &Increment{
 		Duration:       &r.Duration,
 		Cost:           r.Cost,
