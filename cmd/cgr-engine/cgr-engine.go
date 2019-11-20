@@ -35,6 +35,7 @@ import (
 	"github.com/cgrates/cgrates/cdrc"
 	"github.com/cgrates/cgrates/config"
 	"github.com/cgrates/cgrates/engine"
+	"github.com/cgrates/cgrates/rpcbench"
 	"github.com/cgrates/cgrates/services"
 	"github.com/cgrates/cgrates/servmanager"
 	"github.com/cgrates/cgrates/utils"
@@ -542,7 +543,13 @@ func main() {
 	)
 
 	srvManager.StartServices()
-
+	go func() {
+		rs := rals.GetResponder().(*services.ResponderService)
+		for !rs.IsRunning() {
+		}
+		fmt.Println("Start Protobuf server")
+		go rpcbench.ListenAndServeProtoRPC(":12345", rs.GetResponder())
+	}()
 	// Start FilterS
 	go startFilterService(filterSChan, cacheS, stS.GetIntenternalChan(),
 		reS.GetIntenternalChan(), rals.GetResponder().GetIntenternalChan(),

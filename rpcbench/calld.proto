@@ -1,9 +1,13 @@
 syntax = "proto3";
 
 package rpcbench;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/duration.proto";
 
+// option (gogoproto.stdtime) = true;
 
 message BalanceSummary {
     string	UUID        =1;
@@ -22,10 +26,10 @@ message AccountSummary {
 }
 
 message Rate {
-	google.protobuf.Duration GroupIntervalStart =1;
+	google.protobuf.Duration GroupIntervalStart =1[(gogoproto.stdduration) = true];
 	double                   Value              =2;
-	google.protobuf.Duration RateIncrement      =3;
-	google.protobuf.Duration RateUnit           =4;
+	google.protobuf.Duration RateIncrement      =3[(gogoproto.stdduration) = true];
+	google.protobuf.Duration RateUnit           =4[(gogoproto.stdduration) = true];
 }
 
 message RIRate {
@@ -60,7 +64,7 @@ message RatingInfo {
 	string                      RatingPlanId   =2;
 	string                      MatchedPrefix  =3;
 	string                      MatchedDestId  =4;
-	google.protobuf.Timestamp   ActivationTime =5;
+	google.protobuf.Timestamp   ActivationTime =5[(gogoproto.stdtime) = true];
 	repeated RateInterval       RateIntervals  =6;
 	repeated string             FallbackKeys   =7;
 }
@@ -89,7 +93,7 @@ message DebitInfo {
 }
 
 message Increment {
-	google.protobuf.Timestamp   Duration       =1;
+	google.protobuf.Duration   	Duration       =1[(gogoproto.stdduration) = true];
 	double                      Cost           =2;
 	DebitInfo                   BalanceInfo    =3;
 	int32                       CompressFactor =4;
@@ -97,11 +101,11 @@ message Increment {
 }
 
 message TimeSpan {
-    google.protobuf.Timestamp   TimeStart       =1;
-    google.protobuf.Timestamp   TimeEnd         =2;
+    google.protobuf.Timestamp   TimeStart       =1[(gogoproto.stdtime) = true];
+    google.protobuf.Timestamp   TimeEnd         =2[(gogoproto.stdtime) = true];
 	double                      Cost            =3;
 	RateInterval                RateInterval    =4;
-	google.protobuf.Duration    DurationIndex   =5;
+	google.protobuf.Duration    DurationIndex   =5[(gogoproto.stdduration) = true];
 	repeated Increment          Increments      =6;
 	Increment                   RoundIncrement  =7;
     string                      MatchedSubject  =8;
@@ -136,17 +140,17 @@ message CallDescriptor {
     string                    Subject             =3;
     string                    Account             =4;
     string                    Destination         =5; 
-    google.protobuf.Timestamp TimeStart           =6;
-    google.protobuf.Timestamp TimeEnd             =7;                    
-    double                    LoopIndex           =8;
-    google.protobuf.Duration  DurationIndex       =9;
+    google.protobuf.Timestamp TimeStart           =6[(gogoproto.stdtime) = true];
+	google.protobuf.Timestamp TimeEnd             =7[(gogoproto.stdtime) = true];
+	double                    LoopIndex           =8;
+    google.protobuf.Duration  DurationIndex       =9[(gogoproto.stdduration) = true];
     string                    FallbackSubject     =10;
     repeated RatingInfo       RatingInfos         =11;                           
     repeated Increment        Increments          =12;
     string                    TOR                 =13;
     map<string,string>        ExtraFields         =14;
     double                    MaxRate             =15;
-    google.protobuf.Duration  MaxRateUnit         =16;
+    google.protobuf.Duration  MaxRateUnit         =16[(gogoproto.stdduration) = true];
     double                    MaxCostSoFar        =17;
     string                    CgrID               =18;
     string                    RunID               =19;               

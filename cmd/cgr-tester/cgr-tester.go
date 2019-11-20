@@ -21,8 +21,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"math"
+	"net"
 	"net/rpc"
 	"net/rpc/jsonrpc"
 	"os"
@@ -32,6 +34,7 @@ import (
 
 	"github.com/cgrates/cgrates/config"
 	"github.com/cgrates/cgrates/engine"
+	"github.com/cgrates/cgrates/rpcbench"
 	"github.com/cgrates/cgrates/utils"
 )
 
@@ -114,18 +117,22 @@ func durInternalRater(cd *engine.CallDescriptorWithArgDispatcher) (time.Duration
 }
 
 func durRemoteRater(cd *engine.CallDescriptorWithArgDispatcher) (time.Duration, error) {
-	result := engine.CallCost{}
+	result := rpcbench.CallCost{}
 	var client *rpc.Client
 	var err error
 	if *json {
 		client, err = jsonrpc.Dial("tcp", *raterAddress)
 	} else {
-		client, err = rpc.Dial("tcp", *raterAddress)
+		var conn io.ReadWriteCloser
+		conn, err = net.Dial("tcp", ":12345")
+		client = rpcbench.NewClient(conn)
+		// client, err = rpc.Dial("tcp", *raterAddress)
 	}
 
 	if err != nil {
 		return nilDuration, fmt.Errorf("Could not connect to engine: %s", err.Error())
 	}
+	cd2 := rpcbench.NewCallDescriptor(cd.CallDescriptor)
 	defer client.Close()
 	start := time.Now()
 	if *parallel > 0 {
@@ -135,7 +142,7 @@ func durRemoteRater(cd *engine.CallDescriptorWithArgDispatcher) (time.Duration, 
 		for i := 0; i < *runs; i++ {
 			go func() {
 				sem <- 1
-				client.Call(utils.ResponderGetCost, cd, &result)
+				client.Call(utils.ResponderGetCost, cd2, &result)
 				<-sem
 				finish <- 1
 				// divCall = client.Go(utils.ResponderGetCost, cd, &result, nil)
@@ -147,7 +154,7 @@ func durRemoteRater(cd *engine.CallDescriptorWithArgDispatcher) (time.Duration, 
 		// <-divCall.Done
 	} else {
 		for j := 0; j < *runs; j++ {
-			client.Call(utils.ResponderGetCost, cd, &result)
+			client.Call(utils.ResponderGetCost, cd2, &result)
 		}
 	}
 	log.Printf("Result:%s\n", utils.ToJSON(result))
