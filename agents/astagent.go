@@ -390,7 +390,7 @@ func (*AsteriskAgent) V1DisconnectPeer(args *utils.DPRArgs, reply *string) (err 
 
 // V1DisconnectWarning is used to implement the sessions.BiRPClient interface
 func (sma *AsteriskAgent) V1DisconnectWarning(args map[string]interface{}, reply *string) (err error) {
-	channelID := engine.NewMapEvent(args).GetStringIgnoreErrors(channelID)
+	channelID := engine.NewMapEvent(args).GetStringIgnoreErrors(utils.OriginID)
 	if err = sma.playFileOnChannel(channelID, sma.cgrCfg.AsteriskAgentCfg().LowBalanceAnnFile); err != nil {
 		utils.Logger.Warning(
 			fmt.Sprintf("<%s> failed play file <%s> on channel <%s> because: %s",
@@ -410,6 +410,7 @@ func (sma *AsteriskAgent) playFileOnChannel(channelID, file string) (err error) 
 	_, err = sma.astConn.Call(aringo.HTTP_POST, fmt.Sprintf("http://%s/ari/channels/%s/play",
 		sma.cgrCfg.AsteriskAgentCfg().AsteriskConns[sma.astConnIdx].Address, channelID),
 		url.Values{"media": {file}})
+	fmt.Println(err)
 	return
 }
 

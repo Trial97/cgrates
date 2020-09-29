@@ -59,7 +59,8 @@
 	"stats_conns": ["*localhost"],
 	"thresholds_conns": ["*localhost"],
 	"chargers_conns": ["*internal"],
-	"debit_interval": "5s",
+	"debit_interval": "6s",
+	"min_dur_low_balance": "5s",			// threshold which will trigger low balance warnings for prepaid calls (needs to be lower than debit_interval)
 	"channel_sync_interval":"7s",
 },
 
@@ -72,6 +73,7 @@
 	],
 	"sessions_conns": ["*internal"],
 	"create_cdr": true,
+	"low_balance_ann_file": "/home/trial/monkey.wav",				// file to be played when low balance is reached for prepaid calls
 },
 
 
