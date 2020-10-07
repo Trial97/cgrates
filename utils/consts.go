@@ -757,6 +757,7 @@ const (
 	MetaDuration             = "*duration"
 	MetaLibPhoneNumber       = "*libphonenumber"
 	MetaTimeString           = "*time_string"
+	Epoch                    = "Epoch"
 	MetaIP2Hex               = "*ip2hex"
 	MetaString2Hex           = "*string2hex"
 	MetaSIPURIMethod         = "*sipuri_method"

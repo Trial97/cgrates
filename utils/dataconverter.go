@@ -357,7 +357,12 @@ func (tS *TimeStringConverter) Convert(in interface{}) (
 	if err != nil {
 		return nil, err
 	}
-	return tm.Format(tS.Layout), nil
+	switch tS.Layout {
+	case Epoch:
+		return tm.Unix(), nil
+	default:
+		return tm.Format(tS.Layout), nil
+	}
 }
 
 // String2HexConverter will transform the string to hex

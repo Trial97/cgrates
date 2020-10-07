@@ -809,6 +809,16 @@ func TestNewTimeStringConverter(t *testing.T) {
 	if _, err := rcv.Convert("137521s2790"); err == nil {
 		t.Errorf("Expected error received: %v:", err)
 	}
+	eOut = &TimeStringConverter{Epoch}
+	if rcv = NewTimeStringConverter(Epoch); !reflect.DeepEqual(eOut, rcv) {
+		t.Errorf("Expecting: %+v, received: %+v", eOut, rcv)
+	}
+	exp2 := int64(1596045599)
+	if rcv, err := rcv.Convert("2020-07-29T17:59:59Z"); err != nil {
+		t.Error(err)
+	} else if rcv.(int64) != exp2 {
+		t.Errorf("Expecting: %+v, received: %+v", exp2, rcv)
+	}
 }
 
 func TestStringHexConvertor(t *testing.T) {
