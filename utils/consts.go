@@ -1069,7 +1069,6 @@ const (
 const (
 	MetaFirst          = "*first"
 	MetaRandom         = "*random"
-	MetaBroadcast      = "*broadcast"
 	MetaRoundRobin     = "*round_robin"
 	MetaRatio          = "*ratio"
 	MetaDefaultRatio   = "*default_ratio"
