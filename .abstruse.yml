@@ -1,5 +1,7 @@
 image: golang:1.15
 
+matrix:
+  - env: SCRIPT='test'
 
 script:
   - ./test.sh
