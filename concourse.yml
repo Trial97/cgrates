@@ -5,4 +5,4 @@ image_resource:
   source: {repository: golang}
  
 run:
-  path: ./cgrates/test.sh
+  path: cgrates/test.sh
