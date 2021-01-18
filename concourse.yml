@@ -2,7 +2,10 @@ platform: linux
 
 image_resource:
   type: registry-image
-  source: {repository: ubuntu}
+  source: {repository: golang}
    
 run:
-  path: ls
+  path: ./cgrates/test.sh
+
+params:
+  REPO_ROOT: git
