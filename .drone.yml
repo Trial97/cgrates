@@ -3,7 +3,7 @@ type: docker
 name: default
 
 steps:
-- name: news
+- name: news2
   image: golang
   commands:
   - ./test.sh
