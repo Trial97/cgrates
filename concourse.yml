@@ -1,0 +1,8 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: {repository: golang}
+
+run:
+  path: ./cgrates/test.sh
