@@ -8,4 +8,4 @@ run:
   path: ./cgrates/test.sh
 
 params:
-  REPO_ROOT: git
+  REPO_ROOT: cgrates
