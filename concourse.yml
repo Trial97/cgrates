@@ -3,9 +3,9 @@ platform: linux
 image_resource:
   type: registry-image
   source: {repository: golang}
-   
+
+inputs:
+  - name: cgrates
 run:
   path: ./cgrates/test.sh
 
-params:
-  REPO_ROOT: cgrates
