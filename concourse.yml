@@ -5,4 +5,4 @@ image_resource:
   source: {repository: golang}
    
 run:
-  path: ./test.sh
+  path: ./git/test.sh
