@@ -2,7 +2,7 @@ platform: linux
 
 image_resource:
   type: registry-image
-  source: {repository: golang:1.15}
+  source: {repository: golang}
 
 inputs:
   - name: cgrates
