@@ -34,7 +34,7 @@ import (
 func TestCBDebitUnits(t *testing.T) {
 	// with limit and unit factor
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "TestCBDebitUnits",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -69,7 +69,7 @@ func TestCBDebitUnits(t *testing.T) {
 
 	//with increment and not enough balance
 	cb = &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "TestCBDebitUnits",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -91,7 +91,7 @@ func TestCBDebitUnits(t *testing.T) {
 
 	//with increment and unlimited balance
 	cb = &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "TestCBDebitUnits",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -113,7 +113,7 @@ func TestCBDebitUnits(t *testing.T) {
 
 	//with increment and positive limit
 	cb = &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "TestCBDebitUnits",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -137,7 +137,7 @@ func TestCBDebitUnits(t *testing.T) {
 func TestCBSimpleDebit(t *testing.T) {
 	// debit 10 units from a concrete balance with 500 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -158,7 +158,7 @@ func TestCBSimpleDebit(t *testing.T) {
 func TestCBDebitExceed(t *testing.T) {
 	// debit 510 units from a concrete balance with 500 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -178,7 +178,7 @@ func TestCBDebitExceed(t *testing.T) {
 func TestCBDebitUnlimited(t *testing.T) {
 	// debit 510 units from an unlimited concrete balance with 100 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -201,7 +201,7 @@ func TestCBDebitUnlimited(t *testing.T) {
 func TestCBDebitLimit(t *testing.T) {
 	// debit 190 units from a concrete balance with 500 units and limit of 300
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -225,7 +225,7 @@ func TestCBDebitLimit(t *testing.T) {
 func TestCBDebitLimitExceed(t *testing.T) {
 	// debit 210 units from a concrete balance with 500 units and limit of 300
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -248,7 +248,7 @@ func TestCBDebitLimitExceed(t *testing.T) {
 func TestCBDebitLimitExceed2(t *testing.T) {
 	// debit 510 units from a concrete balance with 500 units but because of limit it will debit only 200
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -271,7 +271,7 @@ func TestCBDebitLimitExceed2(t *testing.T) {
 func TestCBDebitWithUnitFactor(t *testing.T) {
 	// debit 1 unit from balance but because of unit factor it will debit 100
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			UnitFactors: []*utils.UnitFactor{
@@ -297,7 +297,7 @@ func TestCBDebitWithUnitFactor(t *testing.T) {
 func TestCBDebitWithUnitFactorWithLimit(t *testing.T) {
 	// debit 3 units from balance but because of unit factor and limit it will debit 200
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			UnitFactors: []*utils.UnitFactor{
@@ -325,7 +325,7 @@ func TestCBDebitWithUnitFactorWithLimit(t *testing.T) {
 func TestCBDebitWithUnitFactorWithUnlimited(t *testing.T) {
 	// debit 3 units from balance but because of unit factor and limit it will debit 200
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			UnitFactors: []*utils.UnitFactor{
@@ -357,7 +357,7 @@ func TestCBDebitWithUnitFactorWithFilters1(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 100 units from a balance ( the unit factor doesn't match )
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			UnitFactors: []*utils.UnitFactor{
@@ -396,7 +396,7 @@ func TestCBDebitWithUnitFactorWithFiltersWithLimit(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 100 units from a balance ( the unit factor match)
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			UnitFactors: []*utils.UnitFactor{
@@ -434,7 +434,7 @@ func TestCBDebitWithMultipleUnitFactor(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 100 units from a balance ( the unit factor doesn't match )
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			UnitFactors: []*utils.UnitFactor{
@@ -473,7 +473,7 @@ func TestCBDebitWithBalanceFilter(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 3 units from a balance (the filter match)
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:        "CB",
 			FilterIDs: []string{"*string:~*req.CustomField:CustomValue"},
 			Type:      utils.MetaConcrete,
@@ -503,7 +503,7 @@ func TestCBDebitWithBalanceFilterNotPassing(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// filter doesn't match )
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:        "CB",
 			FilterIDs: []string{"*string:~*req.CustomField2:CustomValue2"},
 			Type:      utils.MetaConcrete,
@@ -529,7 +529,7 @@ func TestCBDebitWithBalanceInvalidFilter(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 100 units from a balance ( the unit factor doesn't match )
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:        "CB",
 			FilterIDs: []string{"*string"},
 			Type:      utils.MetaConcrete,
@@ -555,7 +555,7 @@ func TestCBDebitWithInvalidUnitFactorFilter(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 100 units from a balance ( the unit factor doesn't match )
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			UnitFactors: []*utils.UnitFactor{
@@ -586,7 +586,7 @@ func TestCBDebitWithInvalidLimit(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 100 units from a balance ( the unit factor doesn't match )
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "CB",
 			Type: utils.MetaConcrete,
 			Opts: map[string]interface{}{
@@ -610,7 +610,7 @@ func TestCBDebitWithInvalidLimit(t *testing.T) {
 func TestCBSDebitAbstracts(t *testing.T) {
 	// debit 10 units from a concrete balance with 500 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -641,7 +641,7 @@ func TestCBSDebitAbstractsInvalidFilter(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 10 units from a concrete balance with 500 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:        "CB",
 			Type:      utils.MetaConcrete,
 			Units:     utils.NewDecimal(500, 0), // 500 Units
@@ -669,7 +669,7 @@ func TestCBSDebitAbstractsNoMatchFilter(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 10 units from a concrete balance with 500 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:        "CB",
 			Type:      utils.MetaConcrete,
 			Units:     utils.NewDecimal(500, 0), // 500 Units
@@ -704,7 +704,7 @@ func TestCBSDebitAbstractsInvalidCostIncrementFilter(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// debit 10 units from a concrete balance with 500 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -748,7 +748,7 @@ func TestCBSDebitAbstractsCoverProcessAttributes(t *testing.T) { // coverage pur
 
 	// debit 10 units from a concrete balance with 500 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -810,7 +810,7 @@ func TestCBSDebitAbstractsCoverProcessAttributes2(t *testing.T) { // coverage pu
 
 	// debit 10 units from a concrete balance with 500 units
 	cb := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units

@@ -77,8 +77,8 @@ func TestMatchingAccountsForEventMockingErrors(t *testing.T) {
 		Tenant:    "cgrates.org",
 		ID:        "1004",
 		FilterIDs: []string{"*string:~*req.Account:1004"},
-		Balances: map[string]*utils.Balance{
-			"ConcreteBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"ConcreteBalance1": &utils.BalanceProfile{
 				ID: "ConcreteBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -156,8 +156,8 @@ func TestMatchingAccountsForEvent(t *testing.T) {
 			},
 		},
 		FilterIDs: []string{"*string:~*req.Account:1004"},
-		Balances: map[string]*utils.Balance{
-			"AbstractBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"AbstractBalance1": &utils.BalanceProfile{
 				ID: "AbstractBalance1",
 
 				Type:  utils.MetaAbstract,
@@ -214,7 +214,7 @@ func TestMatchingAccountsForEvent(t *testing.T) {
 	}
 	accPrf.Weights[0].FilterIDs = []string{}
 
-	expectedAccPrfWeght := utils.AccountProfilesWithWeight{
+	expectedAccPrfWeght := utils.AccountsWithWeight{
 		{
 			AccountProfile: accPrf,
 			Weight:         20,
@@ -240,8 +240,8 @@ func TestAccountDebit(t *testing.T) {
 		Tenant:    "cgrates.org",
 		ID:        "TestAccountDebit",
 		FilterIDs: []string{"*string:~*req.Account:1004"},
-		Balances: map[string]*utils.Balance{
-			"ConcreteBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"ConcreteBalance1": &utils.BalanceProfile{
 				ID: "ConcreteBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -252,7 +252,7 @@ func TestAccountDebit(t *testing.T) {
 				Type:  utils.MetaConcrete,
 				Units: &utils.Decimal{decimal.New(150, 0)},
 			},
-			"AbstractBalance1": &utils.Balance{
+			"AbstractBalance1": &utils.BalanceProfile{
 				ID: "AbstractBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -329,14 +329,14 @@ func TestAccountsDebit(t *testing.T) {
 	fltr := engine.NewFilterS(cfg, nil, dm)
 	accnts := NewAccountS(cfg, fltr, nil, dm)
 
-	accntsPrf := []*utils.AccountProfileWithWeight{
+	accntsPrf := []*utils.AccountWithWeight{
 		{
 			AccountProfile: &utils.AccountProfile{
 				Tenant:    "cgrates.org",
 				ID:        "TestAccountsDebit",
 				FilterIDs: []string{"*string:~*req.Account:1004"},
-				Balances: map[string]*utils.Balance{
-					"AbstractBalance1": &utils.Balance{
+				Balances: map[string]*utils.BalanceProfile{
+					"AbstractBalance1": &utils.BalanceProfile{
 						ID: "AbstractBalance1",
 						Weights: utils.DynamicWeights{
 							{
@@ -353,7 +353,7 @@ func TestAccountsDebit(t *testing.T) {
 							},
 						},
 					},
-					"ConcreteBalance2": &utils.Balance{
+					"ConcreteBalance2": &utils.BalanceProfile{
 						ID: "ConcreteBalance2",
 						Weights: utils.DynamicWeights{
 							{
@@ -448,8 +448,8 @@ func TestV1AccountProfilesForEvent(t *testing.T) {
 			},
 		},
 		FilterIDs: []string{"*string:~*req.Account:1004"},
-		Balances: map[string]*utils.Balance{
-			"AbstractBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"AbstractBalance1": &utils.BalanceProfile{
 				ID: "AbstractBalance1",
 
 				Type:  utils.MetaAbstract,
@@ -506,8 +506,8 @@ func TestV1MaxAbstracts(t *testing.T) {
 			},
 		},
 		FilterIDs: []string{"*string:~*req.Account:1004"},
-		Balances: map[string]*utils.Balance{
-			"AbstractBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"AbstractBalance1": &utils.BalanceProfile{
 				ID: "AbstractBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -524,7 +524,7 @@ func TestV1MaxAbstracts(t *testing.T) {
 					},
 				},
 			},
-			"ConcreteBalance2": &utils.Balance{
+			"ConcreteBalance2": &utils.BalanceProfile{
 				ID: "ConcreteBalance2",
 				Weights: utils.DynamicWeights{
 					{
@@ -593,8 +593,8 @@ func TestV1DebitAbstracts(t *testing.T) {
 			},
 		},
 		FilterIDs: []string{"*string:~*req.Account:1004"},
-		Balances: map[string]*utils.Balance{
-			"AbstractBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"AbstractBalance1": &utils.BalanceProfile{
 				ID: "AbstractBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -679,8 +679,8 @@ func TestV1MaxConcretes(t *testing.T) {
 			},
 		},
 		FilterIDs: []string{"*string:~*req.Account:1004"},
-		Balances: map[string]*utils.Balance{
-			"AbstractBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"AbstractBalance1": &utils.BalanceProfile{
 				ID: "AbstractBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -698,7 +698,7 @@ func TestV1MaxConcretes(t *testing.T) {
 					},
 				},
 			},
-			"ConcreteBalance1": &utils.Balance{
+			"ConcreteBalance1": &utils.BalanceProfile{
 				ID: "ConcreteBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -715,7 +715,7 @@ func TestV1MaxConcretes(t *testing.T) {
 					},
 				},
 			},
-			"ConcreteBalance2": &utils.Balance{
+			"ConcreteBalance2": &utils.BalanceProfile{
 				ID: "ConcreteBalance2",
 				Weights: utils.DynamicWeights{
 					{
@@ -790,8 +790,8 @@ func TestV1DebitConcretes(t *testing.T) {
 			},
 		},
 		FilterIDs: []string{"*string:~*req.Account:1004"},
-		Balances: map[string]*utils.Balance{
-			"AbstractBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"AbstractBalance1": &utils.BalanceProfile{
 				ID: "AbstractBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -809,7 +809,7 @@ func TestV1DebitConcretes(t *testing.T) {
 					},
 				},
 			},
-			"ConcreteBalance1": &utils.Balance{
+			"ConcreteBalance1": &utils.BalanceProfile{
 				ID: "ConcreteBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -826,7 +826,7 @@ func TestV1DebitConcretes(t *testing.T) {
 					},
 				},
 			},
-			"ConcreteBalance2": &utils.Balance{
+			"ConcreteBalance2": &utils.BalanceProfile{
 				ID: "ConcreteBalance2",
 				Weights: utils.DynamicWeights{
 					{
@@ -913,8 +913,8 @@ func TestMultipleAccountsFail(t *testing.T) {
 				},
 			},
 			FilterIDs: []string{"*string:~*req.Account:1004"},
-			Balances: map[string]*utils.Balance{
-				"ConcreteBalance2": &utils.Balance{
+			Balances: map[string]*utils.BalanceProfile{
+				"ConcreteBalance2": &utils.BalanceProfile{
 					ID: "ConcreteBalance2",
 					Weights: utils.DynamicWeights{
 						{
@@ -942,8 +942,8 @@ func TestMultipleAccountsFail(t *testing.T) {
 				},
 			},
 			FilterIDs: []string{"*string:~*req.Account:1004"},
-			Balances: map[string]*utils.Balance{
-				"ConcreteBalance2": &utils.Balance{
+			Balances: map[string]*utils.BalanceProfile{
+				"ConcreteBalance2": &utils.BalanceProfile{
 					ID: "ConcreteBalance2",
 					Weights: utils.DynamicWeights{
 						{
@@ -972,8 +972,8 @@ func TestMultipleAccountsFail(t *testing.T) {
 				},
 			},
 			FilterIDs: []string{"*string:~*req.Account:1004"},
-			Balances: map[string]*utils.Balance{
-				"ConcreteBalance2": &utils.Balance{
+			Balances: map[string]*utils.BalanceProfile{
+				"ConcreteBalance2": &utils.BalanceProfile{
 					ID: "ConcreteBalance2",
 					Weights: utils.DynamicWeights{
 						{
@@ -1078,7 +1078,7 @@ func TestV1ActionSetBalance(t *testing.T) {
 	expectedAcc := &utils.AccountProfile{
 		Tenant: "cgrates.org",
 		ID:     "TestV1ActionSetBalance",
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"AbstractBalance1": {
 				ID:    "AbstractBalance1",
 				Type:  utils.MetaConcrete,

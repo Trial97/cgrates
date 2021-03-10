@@ -25,15 +25,16 @@ import (
 )
 
 // newAbstractBalance constructs an abstractBalanceOperator
-func newAbstractBalanceOperator(blnCfg *utils.Balance, cncrtBlncs []*concreteBalance,
+func newAbstractBalanceOperator(blnCfg *utils.BalanceProfile, units *utils.Decimal, cncrtBlncs []*concreteBalance,
 	fltrS *engine.FilterS, connMgr *engine.ConnManager,
 	attrSConns, rateSConns []string) balanceOperator {
-	return &abstractBalance{blnCfg, cncrtBlncs, fltrS, connMgr, attrSConns, rateSConns}
+	return &abstractBalance{blnCfg, units, cncrtBlncs, fltrS, connMgr, attrSConns, rateSConns}
 }
 
 // abstractBalance is the operator for *abstract balance type
 type abstractBalance struct {
-	blnCfg     *utils.Balance
+	blnCfg     *utils.BalanceProfile
+	units      *utils.Decimal
 	cncrtBlncs []*concreteBalance // paying balances
 	fltrS      *engine.FilterS
 	connMgr    *engine.ConnManager
@@ -65,7 +66,7 @@ func (aB *abstractBalance) debitAbstracts(usage *decimal.Big,
 		return
 	}
 	if blncLmt != nil && blncLmt.Cmp(decimal.New(0, 0)) != 0 {
-		aB.blnCfg.Units.Big = utils.SubstractBig(aB.blnCfg.Units.Big, blncLmt.Big)
+		aB.units.Big = utils.SubstractBig(aB.units.Big, blncLmt.Big)
 		hasLmt = true
 	}
 	// unitFactor
@@ -87,10 +88,10 @@ func (aB *abstractBalance) debitAbstracts(usage *decimal.Big,
 	}
 
 	// balance smaller than usage, correct usage if the balance has limit
-	if aB.blnCfg.Units.Big.Cmp(usage) == -1 && blncLmt != nil {
+	if aB.units.Big.Cmp(usage) == -1 && blncLmt != nil {
 		// decrease the usage to match the maximum increments
 		// will use special rounding to 0 since otherwise we go negative (ie: 0.05 as increment)
-		usage = roundUnitsWithIncrements(aB.blnCfg.Units.Big, costIcrm.Increment.Big)
+		usage = roundUnitsWithIncrements(aB.units.Big, costIcrm.Increment.Big)
 	}
 	if costIcrm.RecurrentFee.Cmp(decimal.New(0, 0)) == 0 &&
 		(costIcrm.FixedFee == nil ||
@@ -109,10 +110,10 @@ func (aB *abstractBalance) debitAbstracts(usage *decimal.Big,
 	}
 
 	if ec.Abstracts.Cmp(decimal.New(0, 0)) != 0 {
-		aB.blnCfg.Units.Big = utils.SubstractBig(aB.blnCfg.Units.Big, ec.Abstracts.Big)
+		aB.units.Big = utils.SubstractBig(aB.units.Big, ec.Abstracts.Big)
 	}
 	if hasLmt { // put back the limit
-		aB.blnCfg.Units.Big = utils.SumBig(aB.blnCfg.Units.Big, blncLmt.Big)
+		aB.units.Big = utils.SumBig(aB.units.Big, blncLmt.Big)
 	}
 	if hasUF {
 		usage = utils.DivideBig(usage, uF.Factor.Big)

@@ -30,11 +30,24 @@ import (
 // actSetAccount updates the balances base on the diktat
 func actSetAccount(dm *engine.DataManager, tnt, acntID string, diktats []*utils.BalDiktat, reset bool) (err error) {
 	var qAcnt *utils.AccountProfile
-	if qAcnt, err = dm.GetAccountProfile(tnt, acntID); err != nil {
+	var acnt *utils.Account
+	if acnt, err = dm.GetAccount2(tnt, acntID); err != nil { // the account should allways exist
 		if err != utils.ErrNotFound {
 			return
 		}
 		// in case the account doesn't exist create it with minimal information
+		qAcnt = &utils.AccountProfile{
+			Tenant: tnt,
+			ID:     acntID,
+		}
+		acnt = &utils.Account{
+			Tenant: tnt,
+			ID:     acntID,
+		}
+	} else if qAcnt, err = dm.GetAccountProfile(tnt, acntID); err != nil {
+		if err != utils.ErrNotFound {
+			return
+		}
 		qAcnt = &utils.AccountProfile{
 			Tenant: tnt,
 			ID:     acntID,
@@ -50,17 +63,33 @@ func actSetAccount(dm *engine.DataManager, tnt, acntID string, diktats []*utils.
 			if len(path) < 3 {
 				return utils.ErrWrongPath
 			}
-			bal, has := qAcnt.Balances[path[1]]
+			balID := path[1]
+			var bal *utils.BalanceProfile
+			units, has := acnt.Balances[balID]
 			if !has {
 				// no balance for that ID create one
-				bal = utils.NewDefaultBalance(path[1])
+				bal = utils.NewDefaultBalance(balID)
 				if qAcnt.Balances == nil {
 					// in case the account has no balance create the balance map
-					qAcnt.Balances = make(map[string]*utils.Balance)
+					qAcnt.Balances = make(map[string]*utils.BalanceProfile)
 				}
-				qAcnt.Balances[path[1]] = bal
+				qAcnt.Balances[balID] = bal
+				units = utils.NewDecimal(0, 0)
+				if acnt.Balances == nil {
+					// in case the account has no balance create the balance map
+					acnt.Balances = make(map[string]*utils.Decimal)
+				}
+				acnt.Balances[balID] = units
+			} else if bal, has = qAcnt.Balances[balID]; !has {
+				// no balance for that ID create one
+				bal = utils.NewDefaultBalance(balID)
+				if qAcnt.Balances == nil {
+					// in case the account has no balance create the balance map
+					qAcnt.Balances = make(map[string]*utils.BalanceProfile)
+				}
+				qAcnt.Balances[balID] = bal
 			}
-			if err = actSetBalance(bal, path[2:], dk.Value, reset); err != nil {
+			if err = actSetBalance(bal, units, path[2:], dk.Value, reset); err != nil {
 				return
 			}
 		case utils.MetaAccount:
@@ -113,7 +142,7 @@ func actSetAccountFields(ac *utils.AccountProfile, path []string, value string) 
 // actSetBalance will set the field at path from balance with value
 // value is string as the value received from action is string
 // the balance must not be nil
-func actSetBalance(bal *utils.Balance, path []string, value string, reset bool) (err error) {
+func actSetBalance(bal *utils.BalanceProfile, units *utils.Decimal, path []string, value string, reset bool) (err error) {
 	// check if we have path past *balance
 	if len(path) == 0 {
 		return utils.ErrWrongPath
@@ -141,10 +170,12 @@ func actSetBalance(bal *utils.Balance, path []string, value string, reset bool) 
 		}
 		// do not overwrite the  Units if the action is *add_balance
 		// this flag makes the difference between the *add_balance and *set_balance actions
-		if !reset && bal.Units != nil {
-			bal.Units.Add(bal.Units.Big, z.Big)
+		if !reset {
+			units.Add(units.Big, z.Big)
 		} else {
-			bal.Units = z
+			// make sure that the units pointer is the same
+			// change only the big value
+			units.Big = z.Big
 		}
 	case utils.UnitFactors:
 		// just recreate them from string

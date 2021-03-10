@@ -199,6 +199,7 @@ var (
 		DispatcherHostIDs:     DispatcherHostPrefix,
 		RateProfileIDs:        RateProfilePrefix,
 		ActionProfileIDs:      ActionProfilePrefix,
+		AccountProfileIDs:     AccountProfilePrefix,
 
 		TimingIDs:                     TimingsPrefix,
 		AttributeFilterIndexIDs:       AttributeFilterIndexes,
@@ -239,6 +240,7 @@ var (
 		DispatcherHostIDs:     CacheDispatcherHosts,
 		RateProfileIDs:        CacheRateProfiles,
 		ActionProfileIDs:      CacheActionProfiles,
+		AccountProfileIDs:     CacheAccountProfiles,
 
 		TimingIDs:                     CacheTimings,
 		AttributeFilterIndexIDs:       CacheAttributeFilterIndexes,
@@ -402,6 +404,7 @@ const (
 	DispatcherProfilePrefix   = "dpp_"
 	RateProfilePrefix         = "rtp_"
 	ActionProfilePrefix       = "acp_"
+	AccountsPrefix            = "acn_"
 	AccountProfilePrefix      = "anp_"
 	DispatcherHostPrefix      = "dph_"
 	ThresholdProfilePrefix    = "thp_"
@@ -1972,6 +1975,7 @@ const (
 	CacheEventCharges                 = "*event_charges"
 	CacheReverseFilterIndexes         = "*reverse_filter_indexes"
 	CacheAccounts                     = "*accounts"
+	CacheAccount                      = "*account" // replace this with *accounts when removed
 	CacheVersions                     = "*versions"
 	CacheCapsEvents                   = "*caps_events"
 	CacheReplicationHosts             = "*replication_hosts"
@@ -2662,6 +2666,7 @@ const (
 	ActionProfilesFilterIndexIDs  = "ActionProfilesFilterIndexIDs"
 	AccountProfilesFilterIndexIDs = "AccountProfilesFilterIndexIDs"
 	FilterIndexIDs                = "FilterIndexIDs"
+	AccountProfileIDs             = "AccountProfileIDs"
 )
 
 // Poster and Event reader constants

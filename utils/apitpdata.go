@@ -1331,6 +1331,7 @@ func NewAttrReloadCacheWithOpts() *AttrReloadCacheWithOpts {
 			RateProfilesFilterIndexIDs: nil,
 			RateFilterIndexIDs:         nil,
 			FilterIndexIDs:             nil,
+			AccountProfileIDs:          nil,
 		},
 	}
 }

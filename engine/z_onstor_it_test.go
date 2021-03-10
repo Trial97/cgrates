@@ -2328,7 +2328,7 @@ func testOnStorITAccountProfile(t *testing.T) {
 				Weight: 2,
 			},
 		},
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"VoiceBalance": {
 				ID:        "VoiceBalance",
 				FilterIDs: []string{"FLTR_RES_GR2"},

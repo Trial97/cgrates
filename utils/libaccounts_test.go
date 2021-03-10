@@ -27,7 +27,7 @@ import (
 )
 
 func TestCloneBalance(t *testing.T) {
-	expBlc := &Balance{
+	expBlc := &BalanceProfile{
 		ID:        "TEST_ID1",
 		FilterIDs: []string{"*string:~*req.Account:1001"},
 		Weights: DynamicWeights{
@@ -84,37 +84,6 @@ func TestCloneAccountProfile(t *testing.T) {
 		Opts: map[string]interface{}{
 			"Destination": 10,
 		},
-		Balances: map[string]*Balance{
-			"VoiceBalance": {
-				ID:        "VoiceBalance",
-				FilterIDs: []string{"*string:~*req.Account:1001"},
-				Weights: DynamicWeights{
-					{
-						Weight: 1.1,
-					},
-				},
-				Type: "*abstract",
-				Opts: map[string]interface{}{
-					"Destination": 10,
-				},
-				CostIncrements: []*CostIncrement{
-					{
-						FilterIDs:    []string{"*string:~*req.Account:1001"},
-						Increment:    &Decimal{decimal.New(1, 1)},
-						FixedFee:     &Decimal{decimal.New(75, 1)},
-						RecurrentFee: &Decimal{decimal.New(20, 1)},
-					},
-				},
-				AttributeIDs: []string{"attr1", "attr2"},
-				UnitFactors: []*UnitFactor{
-					{
-						FilterIDs: []string{"*string:~*req.Account:1001"},
-						Factor:    &Decimal{decimal.New(20, 2)},
-					},
-				},
-				Units: &Decimal{decimal.New(125, 3)},
-			},
-		},
 		ThresholdIDs: []string{"*none"},
 	}
 	if rcv := actPrf.Clone(); !reflect.DeepEqual(rcv, actPrf) {
@@ -162,22 +131,6 @@ func TestAccountProfileAsAccountProfile(t *testing.T) {
 		Tenant: "cgrates.org",
 		ID:     "test_ID1",
 		Opts:   map[string]interface{}{},
-		Balances: map[string]*Balance{
-			"VoiceBalance": {
-				ID:        "VoiceBalance",
-				FilterIDs: []string{"*string:~*req.Account:1001"},
-				Weights: DynamicWeights{
-					{
-						Weight: 1.2,
-					},
-				},
-				Type: "*abstract",
-				Opts: map[string]interface{}{
-					"Destination": 10,
-				},
-				Units: NewDecimal(0, 0),
-			},
-		},
 		Weights: DynamicWeights{
 			{
 				Weight: 10,
@@ -235,7 +188,7 @@ func TestAPIBalanceAsBalance(t *testing.T) {
 			},
 		},
 	}
-	expected := &Balance{
+	expected := &BalanceProfile{
 		ID: "VoiceBalance",
 		CostIncrements: []*CostIncrement{
 			{
@@ -267,8 +220,8 @@ func TestAPIBalanceAsBalance(t *testing.T) {
 }
 
 func TestAccountProfileBalancesAlteredCompareLength(t *testing.T) {
-	actPrf := &AccountProfile{
-		Balances: map[string]*Balance{
+	actPrf := &Account{
+		Balances: map[string]*BalanceProfile{
 			"testString":  {},
 			"testString2": {},
 		},
@@ -286,8 +239,8 @@ func TestAccountProfileBalancesAlteredCompareLength(t *testing.T) {
 }
 
 func TestAccountProfileBalancesAlteredCheckKeys(t *testing.T) {
-	actPrf := &AccountProfile{
-		Balances: map[string]*Balance{
+	actPrf := &Account{
+		Balances: map[string]*BalanceProfile{
 			"testString": {},
 		},
 	}
@@ -304,8 +257,8 @@ func TestAccountProfileBalancesAlteredCheckKeys(t *testing.T) {
 }
 
 func TestAccountProfileBalancesAlteredCompareValues(t *testing.T) {
-	actPrf := &AccountProfile{
-		Balances: map[string]*Balance{
+	actPrf := &Account{
+		Balances: map[string]*BalanceProfile{
 			"testString": {
 				Units: &Decimal{decimal.New(1, 1)},
 			},
@@ -324,7 +277,7 @@ func TestAccountProfileBalancesAlteredCompareValues(t *testing.T) {
 }
 
 func TestAccountProfileBalancesAlteredFalse(t *testing.T) {
-	actPrf := &AccountProfile{}
+	actPrf := &Account{}
 
 	actBk := AccountBalancesBackup{}
 
@@ -336,8 +289,8 @@ func TestAccountProfileBalancesAlteredFalse(t *testing.T) {
 }
 
 func TestAPRestoreFromBackup(t *testing.T) {
-	actPrf := &AccountProfile{
-		Balances: map[string]*Balance{
+	actPrf := &Account{
+		Balances: map[string]*BalanceProfile{
 			"testString": {
 				Units: &Decimal{},
 			},
@@ -357,8 +310,8 @@ func TestAPRestoreFromBackup(t *testing.T) {
 }
 
 func TestAPAccountBalancesBackup(t *testing.T) {
-	actPrf := &AccountProfile{
-		Balances: map[string]*Balance{
+	actPrf := &Account{
+		Balances: map[string]*BalanceProfile{
 			"testKey": {
 				Units: &Decimal{decimal.New(1234, 3)},
 			},
@@ -378,7 +331,7 @@ func TestAPNewDefaultBalance(t *testing.T) {
 	const torFltr = "*string:~*req.ToR:"
 	id := "testID"
 
-	expected := &Balance{
+	expected := &BalanceProfile{
 		ID:    id,
 		Type:  MetaConcrete,
 		Units: NewDecimal(0, 0),
@@ -410,7 +363,7 @@ func TestAPNewDefaultBalance(t *testing.T) {
 
 func TestAPApsSort(t *testing.T) {
 
-	apS := AccountProfilesWithWeight{
+	apS := AccountsWithWeight{
 		{
 			Weight: 2,
 		},
@@ -421,7 +374,7 @@ func TestAPApsSort(t *testing.T) {
 			Weight: 3,
 		},
 	}
-	expected := AccountProfilesWithWeight{
+	expected := AccountsWithWeight{
 		{
 			Weight: 3,
 		},
@@ -441,7 +394,7 @@ func TestAPApsSort(t *testing.T) {
 
 func TestAPAccountProfiles(t *testing.T) {
 
-	apS := AccountProfilesWithWeight{
+	apS := AccountsWithWeight{
 		{
 			AccountProfile: &AccountProfile{
 				Tenant:    "testTenant1",
@@ -452,13 +405,6 @@ func TestAPAccountProfiles(t *testing.T) {
 					ExpiryTime:     time.Date(2020, time.April, 12, 10, 0, 0, 0, time.UTC),
 				},
 				Weights: nil,
-				Balances: map[string]*Balance{
-					"testBalance1": &Balance{
-						ID:    "testBalance1",
-						Type:  MetaAbstract,
-						Units: &Decimal{decimal.New(0, 0)},
-					},
-				},
 			},
 			Weight: 23,
 			LockID: "testString1",
@@ -473,13 +419,6 @@ func TestAPAccountProfiles(t *testing.T) {
 					ExpiryTime:     time.Date(2020, time.April, 12, 10, 0, 0, 0, time.UTC),
 				},
 				Weights: nil,
-				Balances: map[string]*Balance{
-					"testBalance2": &Balance{
-						ID:    "testBalance2",
-						Type:  MetaAbstract,
-						Units: &Decimal{decimal.New(0, 0)},
-					},
-				},
 			},
 			Weight: 15,
 			LockID: "testString2",
@@ -498,7 +437,7 @@ func TestAPAccountProfiles(t *testing.T) {
 }
 
 func TestAPLockIDs(t *testing.T) {
-	apS := AccountProfilesWithWeight{
+	apS := AccountsWithWeight{
 		{
 			AccountProfile: &AccountProfile{
 				Tenant:    "testTenant1",
@@ -509,13 +448,6 @@ func TestAPLockIDs(t *testing.T) {
 					ExpiryTime:     time.Date(2020, time.April, 12, 10, 0, 0, 0, time.UTC),
 				},
 				Weights: nil,
-				Balances: map[string]*Balance{
-					"testBalance1": &Balance{
-						ID:    "testBalance1",
-						Type:  MetaAbstract,
-						Units: &Decimal{decimal.New(0, 0)},
-					},
-				},
 			},
 			Weight: 23,
 			LockID: "testString1",
@@ -530,13 +462,6 @@ func TestAPLockIDs(t *testing.T) {
 					ExpiryTime:     time.Date(2020, time.April, 12, 10, 0, 0, 0, time.UTC),
 				},
 				Weights: nil,
-				Balances: map[string]*Balance{
-					"testBalance2": &Balance{
-						ID:    "testBalance2",
-						Type:  MetaAbstract,
-						Units: &Decimal{decimal.New(0, 0)},
-					},
-				},
 			},
 			Weight: 15,
 			LockID: "testString2",
@@ -555,7 +480,7 @@ func TestAPLockIDs(t *testing.T) {
 }
 
 func TestAPTenantIDs(t *testing.T) {
-	apS := AccountProfilesWithWeight{
+	apS := AccountsWithWeight{
 		{
 			AccountProfile: &AccountProfile{
 				Tenant:    "testTenant1",
@@ -566,13 +491,6 @@ func TestAPTenantIDs(t *testing.T) {
 					ExpiryTime:     time.Date(2020, time.April, 12, 10, 0, 0, 0, time.UTC),
 				},
 				Weights: nil,
-				Balances: map[string]*Balance{
-					"testBalance1": &Balance{
-						ID:    "testBalance1",
-						Type:  MetaAbstract,
-						Units: &Decimal{decimal.New(0, 0)},
-					},
-				},
 			},
 			Weight: 23,
 			LockID: "testString1",
@@ -587,13 +505,6 @@ func TestAPTenantIDs(t *testing.T) {
 					ExpiryTime:     time.Date(2020, time.April, 12, 10, 0, 0, 0, time.UTC),
 				},
 				Weights: nil,
-				Balances: map[string]*Balance{
-					"testBalance2": &Balance{
-						ID:    "testBalance2",
-						Type:  MetaAbstract,
-						Units: &Decimal{decimal.New(0, 0)},
-					},
-				},
 			},
 			Weight: 15,
 			LockID: "testString2",
@@ -647,7 +558,7 @@ func TestAPBlcsSort(t *testing.T) {
 func TestAPBalances(t *testing.T) {
 	blncS := BalancesWithWeight{
 		{
-			Balance: &Balance{
+			Balance: &BalanceProfile{
 				ID:        "testID1",
 				FilterIDs: []string{"testFID1", "testFID2"},
 				Type:      MetaAbstract,
@@ -673,7 +584,7 @@ func TestAPBalances(t *testing.T) {
 			Weight: 23,
 		},
 		{
-			Balance: &Balance{
+			Balance: &BalanceProfile{
 				ID:        "testID2",
 				FilterIDs: []string{"testFID3", "testFID4"},
 				Type:      MetaAbstract,
@@ -700,7 +611,7 @@ func TestAPBalances(t *testing.T) {
 		},
 	}
 
-	expected := make([]*Balance, 0)
+	expected := make([]*BalanceProfile, 0)
 	for i := range blncS {
 		expected = append(expected, blncS[i].Balance)
 	}

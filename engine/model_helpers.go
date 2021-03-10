@@ -3630,12 +3630,24 @@ func APItoModelTPAccountProfile(tPrf *utils.TPAccountProfile) (mdls AccountProfi
 	return
 }
 
+func APItoAccount(tpAp *utils.TPAccountProfile) (ap *utils.Account) {
+	ap = &utils.Account{
+		Tenant:   tpAp.Tenant,
+		ID:       tpAp.ID,
+		Balances: make(map[string]*utils.Decimal, len(tpAp.Balances)),
+	}
+	for balID, bal := range tpAp.Balances {
+		ap.Balances[balID] = utils.NewDecimalFromFloat64(bal.Units)
+	}
+	return
+}
+
 func APItoAccountProfile(tpAp *utils.TPAccountProfile, timezone string) (ap *utils.AccountProfile, err error) {
 	ap = &utils.AccountProfile{
 		Tenant:       tpAp.Tenant,
 		ID:           tpAp.ID,
 		FilterIDs:    make([]string, len(tpAp.FilterIDs)),
-		Balances:     make(map[string]*utils.Balance, len(tpAp.Balances)),
+		Balances:     make(map[string]*utils.BalanceProfile, len(tpAp.Balances)),
 		ThresholdIDs: make([]string, len(tpAp.ThresholdIDs)),
 	}
 	if tpAp.Weights != utils.EmptyString {
@@ -3655,11 +3667,10 @@ func APItoAccountProfile(tpAp *utils.TPAccountProfile, timezone string) (ap *uti
 	}
 
 	for id, bal := range tpAp.Balances {
-		ap.Balances[id] = &utils.Balance{
+		ap.Balances[id] = &utils.BalanceProfile{
 			ID:        bal.ID,
 			FilterIDs: bal.FilterIDs,
 			Type:      bal.Type,
-			Units:     utils.NewDecimalFromFloat64(bal.Units),
 		}
 		if bal.Weights != utils.EmptyString {
 			weight, err := utils.NewDynamicWeightsFromString(bal.Weights, ";", "&")
@@ -3724,7 +3735,7 @@ func APItoAccountProfile(tpAp *utils.TPAccountProfile, timezone string) (ap *uti
 	return
 }
 
-func AccountProfileToAPI(ap *utils.AccountProfile) (tpAp *utils.TPAccountProfile) {
+func AccountProfileToAPI(ap *utils.AccountProfile, acnt *utils.Account) (tpAp *utils.TPAccountProfile) {
 	tpAp = &utils.TPAccountProfile{
 		Tenant:             ap.Tenant,
 		ID:                 ap.ID,
@@ -3746,8 +3757,8 @@ func AccountProfileToAPI(ap *utils.AccountProfile) (tpAp *utils.TPAccountProfile
 		}
 	}
 
-	for i, bal := range ap.Balances {
-		tpAp.Balances[i] = &utils.TPAccountBalance{
+	for balID, bal := range ap.Balances {
+		tpAp.Balances[balID] = &utils.TPAccountBalance{
 			ID:             bal.ID,
 			FilterIDs:      make([]string, len(bal.FilterIDs)),
 			Weights:        bal.Weights.String(";", "&"),
@@ -3758,57 +3769,57 @@ func AccountProfileToAPI(ap *utils.AccountProfile) (tpAp *utils.TPAccountProfile
 			UnitFactors:    make([]*utils.TPBalanceUnitFactor, len(bal.UnitFactors)),
 		}
 		for k, fli := range bal.FilterIDs {
-			tpAp.Balances[i].FilterIDs[k] = fli
+			tpAp.Balances[balID].FilterIDs[k] = fli
 		}
 		//there should not be an invalid value of converting into float64
-		tpAp.Balances[i].Units, _ = bal.Units.Float64()
+		tpAp.Balances[balID].Units, _ = acnt.Balances[balID].Float64()
 		elems := make([]string, 0, len(bal.Opts))
 		for k, v := range bal.Opts {
 			elems = append(elems, utils.ConcatenatedKey(k, utils.IfaceAsString(v)))
 		}
 		for k, cIncrement := range bal.CostIncrements {
-			tpAp.Balances[i].CostIncrement[k] = &utils.TPBalanceCostIncrement{
+			tpAp.Balances[balID].CostIncrement[k] = &utils.TPBalanceCostIncrement{
 				FilterIDs: make([]string, len(cIncrement.FilterIDs)),
 			}
 			for kk, fli := range cIncrement.FilterIDs {
-				tpAp.Balances[i].CostIncrement[k].FilterIDs[kk] = fli
+				tpAp.Balances[balID].CostIncrement[k].FilterIDs[kk] = fli
 			}
 			if cIncrement.Increment != nil {
 				//there should not be an invalid value of converting from Decimal into float64
 				incr, _ := cIncrement.Increment.Float64()
-				tpAp.Balances[i].CostIncrement[k].Increment = &incr
+				tpAp.Balances[balID].CostIncrement[k].Increment = &incr
 			}
 			if cIncrement.FixedFee != nil {
 				//there should not be an invalid value of converting from Decimal into float64
 				fxdFee, _ := cIncrement.FixedFee.Float64()
-				tpAp.Balances[i].CostIncrement[k].FixedFee = &fxdFee
+				tpAp.Balances[balID].CostIncrement[k].FixedFee = &fxdFee
 			}
 			if cIncrement.RecurrentFee != nil {
 				//there should not be an invalid value of converting from Decimal into float64
 				rcrFee, _ := cIncrement.RecurrentFee.Float64()
-				tpAp.Balances[i].CostIncrement[k].RecurrentFee = &rcrFee
+				tpAp.Balances[balID].CostIncrement[k].RecurrentFee = &rcrFee
 			}
 		}
 		for k, attrID := range bal.AttributeIDs {
-			tpAp.Balances[i].AttributeIDs[k] = attrID
+			tpAp.Balances[balID].AttributeIDs[k] = attrID
 		}
 		for k, ratePrfID := range bal.RateProfileIDs {
-			tpAp.Balances[i].RateProfileIDs[k] = ratePrfID
+			tpAp.Balances[balID].RateProfileIDs[k] = ratePrfID
 		}
 		for k, uFactor := range bal.UnitFactors {
-			tpAp.Balances[i].UnitFactors[k] = &utils.TPBalanceUnitFactor{
+			tpAp.Balances[balID].UnitFactors[k] = &utils.TPBalanceUnitFactor{
 				FilterIDs: make([]string, len(uFactor.FilterIDs)),
 			}
 			for kk, fli := range uFactor.FilterIDs {
-				tpAp.Balances[i].UnitFactors[k].FilterIDs[kk] = fli
+				tpAp.Balances[balID].UnitFactors[k].FilterIDs[kk] = fli
 			}
 			if uFactor.Factor != nil {
 				//there should not be an invalid value of converting from Decimal into float64
 				untFctr, _ := uFactor.Factor.Float64()
-				tpAp.Balances[i].UnitFactors[k].Factor = untFctr
+				tpAp.Balances[balID].UnitFactors[k].Factor = untFctr
 			}
 		}
-		tpAp.Balances[i].Opts = strings.Join(elems, utils.InfieldSep)
+		tpAp.Balances[balID].Opts = strings.Join(elems, utils.InfieldSep)
 	}
 	for i, fli := range ap.ThresholdIDs {
 		tpAp.ThresholdIDs[i] = fli

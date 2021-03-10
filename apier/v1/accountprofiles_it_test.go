@@ -130,8 +130,8 @@ func testAccountSGetAccountProfile(t *testing.T) {
 		Tenant:    "cgrates.org",
 		ID:        "1001",
 		FilterIDs: []string{"*string:~*req.Account:1001"},
-		Balances: map[string]*utils.Balance{
-			"GenericBalance1": &utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
+			"GenericBalance1": &utils.BalanceProfile{
 				ID: "GenericBalance1",
 				Weights: []*utils.DynamicWeight{
 					{
@@ -161,7 +161,7 @@ func testAccountSGetAccountProfile(t *testing.T) {
 					},
 				},
 			},
-			"MonetaryBalance1": &utils.Balance{
+			"MonetaryBalance1": &utils.BalanceProfile{
 				ID: "MonetaryBalance1",
 				Weights: utils.DynamicWeights{
 					{
@@ -185,7 +185,7 @@ func testAccountSGetAccountProfile(t *testing.T) {
 					},
 				},
 			},
-			"MonetaryBalance2": &utils.Balance{
+			"MonetaryBalance2": &utils.BalanceProfile{
 				ID: "MonetaryBalance2",
 				Weights: utils.DynamicWeights{
 					{

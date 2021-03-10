@@ -1912,6 +1912,9 @@ func (tpr *TpReader) WriteToDatabase(verbose, disableReverse bool) (err error) {
 		if err = tpr.dm.SetAccountProfile(ap, true); err != nil {
 			return
 		}
+		if err = tpr.dm.SetAccount2(APItoAccount(tpAP)); err != nil {
+			return
+		}
 		if verbose {
 			log.Print("\t", ap.TenantID())
 		}
@@ -2628,6 +2631,7 @@ func (tpr *TpReader) ReloadCache(caching string, verbose bool, opts map[string]i
 			utils.DispatcherHostIDs:     dphIDs,
 			utils.RateProfileIDs:        ratePrfIDs,
 			utils.ActionProfileIDs:      actionPrfIDs,
+			utils.AccountProfileIDs:     accountPrfIDs,
 		},
 	}
 

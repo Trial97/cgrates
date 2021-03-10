@@ -998,7 +998,7 @@ func testITAccountProfileIndexes(t *testing.T) {
 		Tenant:    "cgrates.org",
 		ID:        "test_ID1",
 		FilterIDs: []string{"FIRST", "*string:~*req.Account:DAN"},
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"VoiceBalance": {
 				ID:    "VoiceBalance",
 				Type:  utils.MetaAbstract,
@@ -1011,7 +1011,7 @@ func testITAccountProfileIndexes(t *testing.T) {
 		Tenant:    "cgrates.org",
 		ID:        "test_ID2",
 		FilterIDs: []string{"FIRST"},
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"ConcreteBalance": {
 				ID:    "ConcreteBalance",
 				Type:  utils.MetaConcrete,
@@ -1068,7 +1068,7 @@ func testITAccountProfileIndexes(t *testing.T) {
 		Tenant:    "cgrates.org",
 		ID:        "test_ID3",
 		FilterIDs: []string{"SECOND", "*string:~*req.Account:DAN"},
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"ConcreteBalance": {
 				ID:    "ConcreteBalance",
 				Type:  utils.MetaConcrete,

@@ -33,52 +33,69 @@ type AccountProfile struct {
 	ActivationInterval *ActivationInterval
 	Weights            DynamicWeights
 	Opts               map[string]interface{}
-	Balances           map[string]*Balance
+	Balances           map[string]*BalanceProfile
 	ThresholdIDs       []string
 }
 
+// Account the structure that stores the account balances
+type Account struct {
+	Tenant   string
+	ID       string // Account identificator, unique within the tenant
+	Balances map[string]*Decimal
+	acntPrf  *AccountProfile
+}
+
+// SetAcntPrf will set the AccountProfile
+func (ap *Account) SetAcntPrf(acnt *AccountProfile) {
+	ap.acntPrf = acnt
+}
+
+// GetAcntPrf will return the AccountProfile
+func (ap *Account) GetAcntPrf() *AccountProfile {
+	return ap.acntPrf
+}
+
 // BalancesAltered detects altering of the Balances by comparing the Balance values with the ones from backup
-func (ap *AccountProfile) BalancesAltered(abb AccountBalancesBackup) (altred bool) {
+func (ap *Account) BalancesAltered(abb AccountBalancesBackup) (altred bool) {
 	if len(ap.Balances) != len(abb) {
 		return true
 	}
 	for blncID, blnc := range ap.Balances {
-		if bkpVal, has := abb[blncID]; !has {
-			return true
-		} else if blnc.Units.Big.Cmp(bkpVal) != 0 {
+		if bkpVal, has := abb[blncID]; !has ||
+			blnc.Big.Cmp(bkpVal) != 0 {
 			return true
 		}
 	}
 	return
 }
 
-func (ap *AccountProfile) RestoreFromBackup(abb AccountBalancesBackup) {
+// RestoreFromBackup restores the balances values
+func (ap *Account) RestoreFromBackup(abb AccountBalancesBackup) {
 	for blncID, val := range abb {
-		ap.Balances[blncID].Units.Big = val
+		ap.Balances[blncID].Big = val
 	}
 }
 
-// AccountBalanceBackups is used to create balance snapshots as backups
+// AccountBalancesBackup is used to create balance snapshots as backups
 type AccountBalancesBackup map[string]*decimal.Big
 
 // AccountBalancesBackup returns a backup of all balance values
-func (ap *AccountProfile) AccountBalancesBackup() (abb AccountBalancesBackup) {
+func (ap *Account) AccountBalancesBackup() (abb AccountBalancesBackup) {
 	if ap.Balances != nil {
 		abb = make(AccountBalancesBackup)
 		for blncID, blnc := range ap.Balances {
-			abb[blncID] = new(decimal.Big).Copy(blnc.Units.Big)
+			abb[blncID] = new(decimal.Big).Copy(blnc.Big)
 		}
 	}
 	return
 }
 
 // NewDefaultBalance returns a balance with default costIncrements
-func NewDefaultBalance(id string) *Balance {
+func NewDefaultBalance(id string) *BalanceProfile {
 	const torFltr = "*string:~*req.ToR:"
-	return &Balance{
-		ID:    id,
-		Type:  MetaConcrete,
-		Units: NewDecimal(0, 0),
+	return &BalanceProfile{
+		ID:   id,
+		Type: MetaConcrete,
 		CostIncrements: []*CostIncrement{
 			{
 				FilterIDs:    []string{torFltr + MetaVoice},
@@ -99,13 +116,12 @@ func NewDefaultBalance(id string) *Balance {
 	}
 }
 
-// Balance represents one Balance inside an Account
-type Balance struct {
+// BalanceProfile represents one BalanceProfile inside an Account
+type BalanceProfile struct {
 	ID             string // Balance identificator, unique within an Account
 	FilterIDs      []string
 	Weights        DynamicWeights
 	Type           string
-	Units          *Decimal
 	UnitFactors    []*UnitFactor
 	Opts           map[string]interface{}
 	CostIncrements []*CostIncrement
@@ -163,8 +179,14 @@ type UnitFactor struct {
 	Factor    *Decimal
 }
 
+// TenantID returns the unique identificator for account
 func (aP *AccountProfile) TenantID() string {
 	return ConcatenatedKey(aP.Tenant, aP.ID)
+}
+
+// TenantID returns the unique identificator for account
+func (ap *Account) TenantID() string {
+	return ConcatenatedKey(ap.Tenant, ap.ID)
 }
 
 // Clone returns a clone of the Account
@@ -187,16 +209,25 @@ func (aP *AccountProfile) Clone() (acnt *AccountProfile) {
 			acnt.Opts[key] = value
 		}
 	}
-	if aP.Balances != nil {
-		acnt.Balances = make(map[string]*Balance, len(aP.Balances))
-		for i, value := range aP.Balances {
-			acnt.Balances[i] = value.Clone()
-		}
-	}
 	if aP.ThresholdIDs != nil {
 		acnt.ThresholdIDs = make([]string, len(aP.ThresholdIDs))
 		for i, value := range aP.ThresholdIDs {
 			acnt.ThresholdIDs[i] = value
+		}
+	}
+	return
+}
+
+// Clone returns a clone of the Account
+func (ap *Account) Clone() (acnt *Account) {
+	acnt = &Account{
+		Tenant: ap.Tenant,
+		ID:     ap.ID,
+	}
+	if ap.Balances != nil {
+		acnt.Balances = make(map[string]*Decimal, len(ap.Balances))
+		for i, value := range ap.Balances {
+			acnt.Balances[i] = value.Clone()
 		}
 	}
 	return
@@ -214,8 +245,8 @@ func (aI *ActivationInterval) Clone() *ActivationInterval {
 }
 
 //Clone return a clone of the Balance
-func (bL *Balance) Clone() (blnc *Balance) {
-	blnc = &Balance{
+func (bL *BalanceProfile) Clone() (blnc *BalanceProfile) {
+	blnc = &BalanceProfile{
 		ID:      bL.ID,
 		Weights: bL.Weights.Clone(),
 		Type:    bL.Type,
@@ -225,9 +256,6 @@ func (bL *Balance) Clone() (blnc *Balance) {
 		for i, value := range bL.FilterIDs {
 			blnc.FilterIDs[i] = value
 		}
-	}
-	if bL.Units != nil {
-		blnc.Units = bL.Units.Clone()
 	}
 	if bL.UnitFactors != nil {
 		blnc.UnitFactors = make([]*UnitFactor, len(bL.UnitFactors))
@@ -262,34 +290,45 @@ func (bL *Balance) Clone() (blnc *Balance) {
 	return
 }
 
-// AccountProfileWithWeight attaches static weight to AccountProfile
-type AccountProfileWithWeight struct {
-	*AccountProfile
+// AccountWithWeight attaches static weight to AccountProfile
+type AccountWithWeight struct {
+	*Account
 	Weight float64
 	LockID string
 }
 
-// AccountProfilesWithWeight is a sortable list of AccountProfileWithWeight
-type AccountProfilesWithWeight []*AccountProfileWithWeight
+// AccountsWithWeight is a sortable list of AccountProfileWithWeight
+type AccountsWithWeight []*AccountWithWeight
 
 // Sort is part of sort interface, sort based on Weight
-func (aps AccountProfilesWithWeight) Sort() {
-	sort.Slice(aps, func(i, j int) bool { return aps[i].Weight > aps[j].Weight })
+func (apWws AccountsWithWeight) Sort() {
+	sort.Slice(apWws, func(i, j int) bool { return apWws[i].Weight > apWws[j].Weight })
 }
 
 // AccountProfiles returns the list of AccountProfiles
-func (apWws AccountProfilesWithWeight) AccountProfiles() (aps []*AccountProfile) {
+func (apWws AccountsWithWeight) AccountProfiles() (aps []*AccountProfile) {
 	if apWws != nil {
 		aps = make([]*AccountProfile, len(apWws))
 		for i, apWw := range apWws {
-			aps[i] = apWw.AccountProfile
+			aps[i] = apWw.acntPrf
+		}
+	}
+	return
+}
+
+// Accounts returns the list of Accounts
+func (apWws AccountsWithWeight) Accounts() (aps []*Account) {
+	if apWws != nil {
+		aps = make([]*Account, len(apWws))
+		for i, apWw := range apWws {
+			aps[i] = apWw.Account
 		}
 	}
 	return
 }
 
 // LockIDs returns the list of LockIDs
-func (apWws AccountProfilesWithWeight) LockIDs() (lkIDs []string) {
+func (apWws AccountsWithWeight) LockIDs() (lkIDs []string) {
 	if apWws != nil {
 		lkIDs = make([]string, len(apWws))
 		for i, apWw := range apWws {
@@ -299,11 +338,12 @@ func (apWws AccountProfilesWithWeight) LockIDs() (lkIDs []string) {
 	return
 }
 
-func (apWws AccountProfilesWithWeight) TenantIDs() (tntIDs []string) {
+// TenantIDs return the list of tenants ids from each account profile
+func (apWws AccountsWithWeight) TenantIDs() (tntIDs []string) {
 	if apWws != nil {
 		tntIDs = make([]string, len(apWws))
 		for i, apWw := range apWws {
-			tntIDs[i] = apWw.AccountProfile.TenantID()
+			tntIDs[i] = apWw.TenantID()
 		}
 	}
 	return
@@ -311,7 +351,7 @@ func (apWws AccountProfilesWithWeight) TenantIDs() (tntIDs []string) {
 
 // BalanceWithWeight attaches static Weight to Balance
 type BalanceWithWeight struct {
-	*Balance
+	*BalanceProfile
 	Weight float64
 }
 
@@ -319,25 +359,19 @@ type BalanceWithWeight struct {
 type BalancesWithWeight []*BalanceWithWeight
 
 // Sort is part of sort interface, sort based on Weight
-func (blcs BalancesWithWeight) Sort() {
-	sort.Slice(blcs, func(i, j int) bool { return blcs[i].Weight > blcs[j].Weight })
+func (bWws BalancesWithWeight) Sort() {
+	sort.Slice(bWws, func(i, j int) bool { return bWws[i].Weight > bWws[j].Weight })
 }
 
 // Balances returns the list of Balances
-func (bWws BalancesWithWeight) Balances() (blncs []*Balance) {
+func (bWws BalancesWithWeight) Balances() (blncs []*BalanceProfile) {
 	if bWws != nil {
-		blncs = make([]*Balance, len(bWws))
+		blncs = make([]*BalanceProfile, len(bWws))
 		for i, bWw := range bWws {
-			blncs[i] = bWw.Balance
+			blncs[i] = bWw.BalanceProfile
 		}
 	}
 	return
-}
-
-// APIAccountProfileWithOpts is used in API calls
-type APIAccountProfileWithOpts struct {
-	*APIAccountProfile
-	Opts map[string]interface{}
 }
 
 // AccountProfileWithOpts is used in API calls
@@ -346,16 +380,10 @@ type AccountProfileWithOpts struct {
 	Opts map[string]interface{}
 }
 
-// ArgsAccountForEvent arguments used for process event
+// ArgsAccountsForEvent arguments used for process event
 type ArgsAccountsForEvent struct {
 	*CGREvent
 	AccountIDs []string
-}
-
-type ReplyMaxUsage struct {
-	AccountID string
-	MaxUsage  time.Duration
-	Cost      *EventCharges
 }
 
 // APIAccountProfile represents one APIAccount on a Tenant
@@ -386,7 +414,7 @@ func (ext *APIAccountProfile) AsAccountProfile() (profile *AccountProfile, err e
 		}
 	}
 	if len(ext.Balances) != 0 {
-		profile.Balances = make(map[string]*Balance, len(ext.Balances))
+		profile.Balances = make(map[string]*BalanceProfile, len(ext.Balances))
 		for i, bal := range ext.Balances {
 			if profile.Balances[i], err = bal.AsBalance(); err != nil {
 				return nil, err
@@ -402,7 +430,6 @@ type APIBalance struct {
 	FilterIDs      []string
 	Weights        string
 	Type           string
-	Units          float64
 	UnitFactors    []*APIUnitFactor
 	Opts           map[string]interface{}
 	CostIncrements []*APICostIncrement
@@ -411,12 +438,11 @@ type APIBalance struct {
 }
 
 // AsBalance convert APIBalance struct to Balance struct
-func (ext *APIBalance) AsBalance() (balance *Balance, err error) {
-	balance = &Balance{
+func (ext *APIBalance) AsBalance() (balance *BalanceProfile, err error) {
+	balance = &BalanceProfile{
 		ID:             ext.ID,
 		FilterIDs:      ext.FilterIDs,
 		Type:           ext.Type,
-		Units:          NewDecimalFromFloat64(ext.Units),
 		Opts:           ext.Opts,
 		AttributeIDs:   ext.AttributeIDs,
 		RateProfileIDs: ext.RateProfileIDs,
@@ -481,6 +507,7 @@ func (ext *APIUnitFactor) AsUnitFactor() *UnitFactor {
 	}
 }
 
+// ArgsActSetBalance the arguments for setBalance API action
 type ArgsActSetBalance struct {
 	Tenant    string
 	AccountID string
@@ -489,11 +516,13 @@ type ArgsActSetBalance struct {
 	Opts      map[string]interface{}
 }
 
+// BalDiktat one rule for the setBalance action
 type BalDiktat struct {
 	Path  string
 	Value string
 }
 
+// ArgsActRemoveBalances the arguments for removeBalance API action
 type ArgsActRemoveBalances struct {
 	Tenant     string
 	AccountID  string

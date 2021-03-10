@@ -244,7 +244,7 @@ func testAccActionsGetAccountAfterActions(t *testing.T) {
 	accPrf := &utils.AccountProfile{
 		Tenant: "cgrates.org",
 		ID:     "1001",
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"MONETARY": {
 				ID:      "MONETARY",
 				Weights: utils.DynamicWeights{{}},
@@ -346,7 +346,7 @@ func testAccActionsGetAccountAfterRemActions(t *testing.T) {
 	accPrf := &utils.AccountProfile{
 		Tenant:       "cgrates.org",
 		ID:           "1001",
-		Balances:     map[string]*utils.Balance{},
+		Balances:     map[string]*utils.BalanceProfile{},
 		ThresholdIDs: []string{utils.MetaNone},
 	}
 	var result *utils.AccountProfile

@@ -87,14 +87,9 @@ func (apierSv1 *APIerSv1) GetAccountProfileIDsCount(args *utils.TenantWithOpts, 
 	return
 }
 
-type APIAccountProfileWithCache struct {
-	*utils.APIAccountProfile
-	Cache *string
-}
-
 //SetAccountProfile add/update a new Account Profile
-func (apierSv1 *APIerSv1) SetAccountProfile(extAp *APIAccountProfileWithCache, reply *string) error {
-	if missing := utils.MissingStructFields(extAp.APIAccountProfile, []string{utils.ID}); len(missing) != 0 {
+func (apierSv1 *APIerSv1) SetAccountProfile(extAp *utils.APIAccountProfile, reply *string) error {
+	if missing := utils.MissingStructFields(extAp, []string{utils.ID}); len(missing) != 0 {
 		return utils.NewErrMandatoryIeMissing(missing...)
 	}
 	if extAp.Tenant == utils.EmptyString {

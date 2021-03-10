@@ -955,3 +955,21 @@ func (iDB *InternalDB) RemoveAccountProfileDrv(tenant, id string) (err error) {
 		cacheCommit(utils.NonTransactional), utils.NonTransactional)
 	return
 }
+
+func (iDB *InternalDB) GetAccount2Drv(tenant, id string) (*utils.Account, error) {
+	x, ok := Cache.Get(utils.CacheAccount, utils.ConcatenatedKey(tenant, id))
+	if !ok || x == nil {
+		return nil, utils.ErrNotFound
+	}
+	return x.(*utils.Account).Clone(), nil
+}
+func (iDB *InternalDB) SetAccount2Drv(ap *utils.Account) (err error) {
+	Cache.SetWithoutReplicate(utils.CacheAccount, ap.TenantID(), ap, nil,
+		cacheCommit(utils.NonTransactional), utils.NonTransactional)
+	return
+}
+func (iDB *InternalDB) RemoveAccount2Drv(tenant, id string) (err error) {
+	Cache.RemoveWithoutReplicate(utils.CacheAccount, utils.ConcatenatedKey(tenant, id),
+		cacheCommit(utils.NonTransactional), utils.NonTransactional)
+	return
+}

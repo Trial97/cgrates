@@ -3718,3 +3718,25 @@ func (dm *DataManager) RemoveAccountProfile(tenant, id string,
 	}
 	return
 }
+
+func (dm *DataManager) GetAccount2(tnt, id string) (acc *utils.Account, err error) {
+	if dm == nil {
+		err = utils.ErrNoDatabaseConn
+		return
+	}
+	return nil, utils.ErrNotImplemented
+}
+
+func (dm *DataManager) SetAccount2(acc *utils.Account) (err error) {
+	if dm == nil {
+		return utils.ErrNoDatabaseConn
+	}
+	return utils.ErrNotImplemented
+}
+
+func (dm *DataManager) RemoveAccount2(tnt, id string) (err error) {
+	if dm == nil {
+		return utils.ErrNoDatabaseConn
+	}
+	return utils.ErrNotImplemented
+}

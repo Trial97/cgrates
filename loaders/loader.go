@@ -670,6 +670,10 @@ func (ldr *Loader) storeLoadedData(loaderType string,
 				if err := ldr.dm.SetAccountProfile(acp, true); err != nil {
 					return err
 				}
+				if err := ldr.dm.SetAccount2(engine.APItoAccount(tpAcp)); err != nil {
+					return err
+				}
+				cacheArgs[utils.AccountProfileIDs] = ids
 			}
 		}
 	}
@@ -1026,6 +1030,11 @@ func (ldr *Loader) removeLoadedData(loaderType string, lds map[string][]LoaderDa
 					tntIDStruct.ID, utils.NonTransactional, true); err != nil {
 					return err
 				}
+				if err := ldr.dm.RemoveAccount2(tntIDStruct.Tenant,
+					tntIDStruct.ID); err != nil {
+					return err
+				}
+				cacheArgs[utils.AccountProfileIDs] = ids
 			}
 		}
 	}

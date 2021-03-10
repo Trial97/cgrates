@@ -7215,7 +7215,7 @@ func TestApitoAccountProfileCase2(t *testing.T) {
 				Weight: 10.0,
 			},
 		},
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"VoiceBalance": {
 				ID:        "VoiceBalance",
 				FilterIDs: []string{"FLTR_RES_GR2"},
@@ -7407,7 +7407,7 @@ func TestModelHelpersAccountProfileToAPI(t *testing.T) {
 				Weight: 2,
 			},
 		},
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"VoiceBalance": {
 				ID:        "VoiceBalance",
 				FilterIDs: []string{"FLTR_RES_GR2"},

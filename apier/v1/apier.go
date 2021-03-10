@@ -1987,7 +1987,11 @@ func (apierSv1 *APIerSv1) ExportToFolder(arg *utils.ArgExportToFolder, reply *st
 				if err != nil {
 					return err
 				}
-				for _, model := range engine.APItoModelTPAccountProfile(engine.AccountProfileToAPI(accPrf)) {
+				acc, err := apierSv1.DataManager.GetAccount2(tntID[0], tntID[1])
+				if err != nil {
+					return err
+				}
+				for _, model := range engine.APItoModelTPAccountProfile(engine.AccountProfileToAPI(accPrf, acc)) {
 					if record, err := engine.CsvDump(model); err != nil {
 						return err
 					} else if err := csvWriter.Write(record); err != nil {

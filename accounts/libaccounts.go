@@ -31,7 +31,8 @@ import (
 )
 
 // newAccountBalances constructs accountBalances
-func newBalanceOperators(blnCfgs []*utils.Balance,
+// units need to be sincronized with the blnCfgs slice
+func newBalanceOperators(blnCfgs []*utils.BalanceProfile, units map[string]*utils.Decimal,
 	fltrS *engine.FilterS, connMgr *engine.ConnManager,
 	attrSConns, rateSConns []string) (blncOpers []balanceOperator, err error) {
 
@@ -41,7 +42,7 @@ func newBalanceOperators(blnCfgs []*utils.Balance,
 		if blnCfg.Type != utils.MetaConcrete {
 			continue
 		}
-		blncOpers[i] = newConcreteBalanceOperator(blnCfg,
+		blncOpers[i] = newConcreteBalanceOperator(blnCfg, units[blnCfg.ID],
 			fltrS, connMgr, attrSConns, rateSConns)
 		cncrtBlncs = append(cncrtBlncs, blncOpers[i].(*concreteBalance))
 	}
@@ -50,7 +51,7 @@ func newBalanceOperators(blnCfgs []*utils.Balance,
 		if blnCfg.Type == utils.MetaConcrete {
 			continue
 		}
-		if blncOpers[i], err = newBalanceOperator(blnCfg, cncrtBlncs, fltrS, connMgr,
+		if blncOpers[i], err = newBalanceOperator(blnCfg, units[blnCfg.ID], cncrtBlncs, fltrS, connMgr,
 			attrSConns, rateSConns); err != nil {
 			return
 		}
@@ -61,16 +62,17 @@ func newBalanceOperators(blnCfgs []*utils.Balance,
 
 // newBalanceOperator instantiates balanceOperator interface
 // cncrtBlncs are needed for abstract balance debits
-func newBalanceOperator(blncCfg *utils.Balance, cncrtBlncs []*concreteBalance,
-	fltrS *engine.FilterS, connMgr *engine.ConnManager,
-	attrSConns, rateSConns []string) (bP balanceOperator, err error) {
+func newBalanceOperator(blncCfg *utils.BalanceProfile, units *utils.Decimal,
+	cncrtBlncs []*concreteBalance, fltrS *engine.FilterS,
+	connMgr *engine.ConnManager, attrSConns,
+	rateSConns []string) (bP balanceOperator, err error) {
 	switch blncCfg.Type {
 	default:
 		return nil, fmt.Errorf("unsupported balance type: <%s>", blncCfg.Type)
 	case utils.MetaConcrete:
-		return newConcreteBalanceOperator(blncCfg, fltrS, connMgr, attrSConns, rateSConns), nil
+		return newConcreteBalanceOperator(blncCfg, units, fltrS, connMgr, attrSConns, rateSConns), nil
 	case utils.MetaAbstract:
-		return newAbstractBalanceOperator(blncCfg, cncrtBlncs, fltrS, connMgr, attrSConns, rateSConns), nil
+		return newAbstractBalanceOperator(blncCfg, units, cncrtBlncs, fltrS, connMgr, attrSConns, rateSConns), nil
 	}
 }
 
@@ -325,22 +327,22 @@ func maxDebitAbstractsFromConcretes(cncrtBlncs []*concreteBalance, usage *decima
 
 // restoreAccounts will restore the accounts in DataDB out of their backups if present
 func restoreAccounts(dm *engine.DataManager,
-	acnts []*utils.AccountProfileWithWeight, bkps []utils.AccountBalancesBackup) {
+	acnts []*utils.Account, bkps []utils.AccountBalancesBackup) {
 	for i, bkp := range bkps {
 		if bkp == nil ||
-			!acnts[i].AccountProfile.BalancesAltered(bkp) {
+			!acnts[i].BalancesAltered(bkp) {
 			continue
 		}
-		acnts[i].AccountProfile.RestoreFromBackup(bkp)
-		if err := dm.SetAccountProfile(acnts[i].AccountProfile, false); err != nil {
+		acnts[i].RestoreFromBackup(bkp)
+		if err := dm.SetAccount2(acnts[i]); err != nil {
 			utils.Logger.Warning(fmt.Sprintf("<%s> error <%s> restoring account <%s>",
-				utils.AccountS, err, acnts[i].AccountProfile.TenantID()))
+				utils.AccountS, err, acnts[i].TenantID()))
 		}
 	}
 }
 
 // unlockAccountProfiles is used to unlock the accounts based on their lock identifiers
-func unlockAccountProfiles(acnts utils.AccountProfilesWithWeight) {
+func unlockAccountProfiles(acnts utils.AccountsWithWeight) {
 	for _, lkID := range acnts.LockIDs() {
 		guardian.Guardian.UnguardIDs(lkID)
 	}

@@ -80,6 +80,7 @@ const (
 	ColApp  = "action_profiles"
 	ColLID  = "load_ids"
 	ColAnp  = "account_profiles"
+	ColAcn  = "account"
 )
 
 var (
@@ -644,6 +645,8 @@ func (ms *MongoStorage) GetKeysForPrefix(prefix string) (result []string, err er
 			result, err = ms.getField2(sctx, ColApp, utils.ActionProfilePrefix, subject, tntID)
 		case utils.AccountProfilePrefix:
 			result, err = ms.getField2(sctx, ColAnp, utils.AccountProfilePrefix, subject, tntID)
+		case utils.AccountsPrefix:
+			result, err = ms.getField2(sctx, ColAnp, utils.AccountsPrefix, subject, tntID)
 		case utils.DispatcherHostPrefix:
 			result, err = ms.getField2(sctx, ColDph, utils.DispatcherHostPrefix, subject, tntID)
 		case utils.AttributeFilterIndexes:
@@ -726,6 +729,8 @@ func (ms *MongoStorage) HasDataDrv(category, subject, tenant string) (has bool, 
 			count, err = ms.getCol(ColApp).CountDocuments(sctx, bson.M{"tenant": tenant, "id": subject})
 		case utils.AccountProfilePrefix:
 			count, err = ms.getCol(ColAnp).CountDocuments(sctx, bson.M{"tenant": tenant, "id": subject})
+		case utils.AccountsPrefix:
+			count, err = ms.getCol(ColAcn).CountDocuments(sctx, bson.M{"tenant": tenant, "id": subject})
 		default:
 			err = fmt.Errorf("unsupported category in HasData: %s", category)
 		}
@@ -2240,6 +2245,40 @@ func (ms *MongoStorage) SetAccountProfileDrv(ap *utils.AccountProfile) (err erro
 func (ms *MongoStorage) RemoveAccountProfileDrv(tenant, id string) (err error) {
 	return ms.query(func(sctx mongo.SessionContext) (err error) {
 		dr, err := ms.getCol(ColAnp).DeleteOne(sctx, bson.M{"tenant": tenant, "id": id})
+		if dr.DeletedCount == 0 {
+			return utils.ErrNotFound
+		}
+		return err
+	})
+}
+
+func (ms *MongoStorage) GetAccount2Drv(tenant, id string) (ap *utils.Account, err error) {
+	ap = new(utils.Account)
+	err = ms.query(func(sctx mongo.SessionContext) (err error) {
+		cur := ms.getCol(ColAcn).FindOne(sctx, bson.M{"tenant": tenant, "id": id})
+		if err := cur.Decode(ap); err != nil {
+			ap = nil
+			if err == mongo.ErrNoDocuments {
+				return utils.ErrNotFound
+			}
+			return err
+		}
+		return nil
+	})
+	return
+}
+func (ms *MongoStorage) SetAccount2Drv(ap *utils.Account) (err error) {
+	return ms.query(func(sctx mongo.SessionContext) (err error) {
+		_, err = ms.getCol(ColAcn).UpdateOne(sctx, bson.M{"tenant": ap.Tenant, "id": ap.ID},
+			bson.M{"$set": ap},
+			options.Update().SetUpsert(true),
+		)
+		return err
+	})
+}
+func (ms *MongoStorage) RemoveAccount2Drv(tenant, id string) (err error) {
+	return ms.query(func(sctx mongo.SessionContext) (err error) {
+		dr, err := ms.getCol(ColAcn).DeleteOne(sctx, bson.M{"tenant": tenant, "id": id})
 		if dr.DeletedCount == 0 {
 			return utils.ErrNotFound
 		}

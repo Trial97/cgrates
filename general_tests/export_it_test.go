@@ -520,7 +520,7 @@ func testExpVerifyAccountProfiles(t *testing.T) {
 				Weight: 20,
 			},
 		},
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"MonetaryBalance": {
 				ID: "MonetaryBalance",
 				Weights: utils.DynamicWeights{

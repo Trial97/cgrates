@@ -22,7 +22,7 @@ import (
 	"errors"
 )
 
-// NewEventChargers instantiates the EventChargers in a central place
+// NewEventCharges instantiates the EventChargers in a central place
 func NewEventCharges() (ec *EventCharges) {
 	ec = new(EventCharges)
 	return
@@ -61,18 +61,18 @@ func (ec *EventCharges) Merge(eCs ...*EventCharges) {
 func (ec *EventCharges) AsExtEventCharges() (eEc *ExtEventCharges, err error) {
 	eEc = new(ExtEventCharges)
 	if ec.Abstracts != nil {
-		if flt, ok := ec.Abstracts.Big.Float64(); !ok {
+		flt, ok := ec.Abstracts.Big.Float64()
+		if !ok {
 			return nil, errors.New("cannot convert decimal Abstracts to float64")
-		} else {
-			eEc.Abstracts = &flt
 		}
+		eEc.Abstracts = &flt
 	}
 	if ec.Concretes != nil {
-		if flt, ok := ec.Concretes.Big.Float64(); !ok {
+		flt, ok := ec.Concretes.Big.Float64()
+		if !ok {
 			return nil, errors.New("cannot convert decimal Concretes to float64")
-		} else {
-			eEc.Concretes = &flt
 		}
+		eEc.Concretes = &flt
 	}
 	// add here code for the rest of the fields
 	return

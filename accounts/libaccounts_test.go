@@ -38,7 +38,7 @@ func TestNewAccountBalanceOperators(t *testing.T) {
 	acntPrf := &utils.AccountProfile{
 		ID:     "TEST_ID",
 		Tenant: "cgrates.org",
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"BL0": {
 				ID:   "BALANCE1",
 				Type: utils.MetaAbstract,
@@ -68,7 +68,7 @@ func TestNewAccountBalanceOperators(t *testing.T) {
 		fltrS:      filters,
 		cncrtBlncs: cncrtBlncs,
 	}
-	blnCfgs := []*utils.Balance{acntPrf.Balances["BL0"], acntPrf.Balances["BL1"]}
+	blnCfgs := []*utils.BalanceProfile{acntPrf.Balances["BL0"], acntPrf.Balances["BL1"]}
 	if blcOp, err := newBalanceOperators(blnCfgs, filters, nil,
 		nil, nil); err != nil {
 		t.Error(err)
@@ -208,7 +208,7 @@ func TestDebitUsageFromConcretes(t *testing.T) {
 
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	cb1 := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB1",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -216,7 +216,7 @@ func TestDebitUsageFromConcretes(t *testing.T) {
 		fltrS: filterS,
 	}
 	cb2 := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB2",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -273,7 +273,7 @@ func TestDebitUsageFromConcretesFromRateS(t *testing.T) {
 	})
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	cb1 := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB1",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -282,7 +282,7 @@ func TestDebitUsageFromConcretesFromRateS(t *testing.T) {
 		connMgr: connMgr,
 	}
 	cb2 := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB2",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -318,7 +318,7 @@ func TestDebitUsageFromConcretesRestore(t *testing.T) {
 
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	cb1 := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:        "CB1",
 			Type:      utils.MetaConcrete,
 			FilterIDs: []string{"*string"},
@@ -327,7 +327,7 @@ func TestDebitUsageFromConcretesRestore(t *testing.T) {
 		fltrS: filterS,
 	}
 	cb2 := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB2",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -357,7 +357,7 @@ func TestMaxDebitUsageFromConcretes(t *testing.T) {
 	config.SetCgrConfig(cfg)
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	cb1 := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB1",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -365,7 +365,7 @@ func TestMaxDebitUsageFromConcretes(t *testing.T) {
 		fltrS: filterS,
 	}
 	cb2 := &concreteBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "CB2",
 			Type:  utils.MetaConcrete,
 			Units: utils.NewDecimal(500, 0), // 500 Units
@@ -393,7 +393,7 @@ func TestRestoreAccount(t *testing.T) { //coverage purpose
 	acntPrf := &utils.AccountProfile{
 		Tenant: "cgrates.org",
 		ID:     "1001",
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"CB1": {
 				ID:    "CB1",
 				Type:  utils.MetaConcrete,
@@ -409,7 +409,7 @@ func TestRestoreAccount(t *testing.T) { //coverage purpose
 	if err := dm.SetAccountProfile(acntPrf, false); err != nil {
 		t.Error(err)
 	}
-	restoreAccounts(dm, []*utils.AccountProfileWithWeight{
+	restoreAccounts(dm, []*utils.AccountWithWeight{
 		{acntPrf, 0, utils.EmptyString},
 	}, []utils.AccountBalancesBackup{
 		map[string]*decimal.Big{"CB2": decimal.New(100, 0)},
@@ -434,7 +434,7 @@ func TestRestoreAccount2(t *testing.T) { //coverage purpose
 	acntPrf := &utils.AccountProfile{
 		Tenant: "cgrates.org",
 		ID:     "1001",
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"CB1": {
 				ID:    "CB1",
 				Type:  utils.MetaConcrete,
@@ -447,7 +447,7 @@ func TestRestoreAccount2(t *testing.T) { //coverage purpose
 			},
 		},
 	}
-	restoreAccounts(dm, []*utils.AccountProfileWithWeight{
+	restoreAccounts(dm, []*utils.AccountWithWeight{
 		{acntPrf, 0, utils.EmptyString},
 	}, []utils.AccountBalancesBackup{
 		map[string]*decimal.Big{"CB1": decimal.New(100, 0)},
@@ -463,7 +463,7 @@ func TestRestoreAccount3(t *testing.T) { //coverage purpose
 	acntPrf := &utils.AccountProfile{
 		Tenant: "cgrates.org",
 		ID:     "1001",
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"CB1": {
 				ID:    "CB1",
 				Type:  utils.MetaConcrete,
@@ -479,7 +479,7 @@ func TestRestoreAccount3(t *testing.T) { //coverage purpose
 	if err := dm.SetAccountProfile(acntPrf, false); err != nil {
 		t.Error(err)
 	}
-	restoreAccounts(dm, []*utils.AccountProfileWithWeight{
+	restoreAccounts(dm, []*utils.AccountWithWeight{
 		{acntPrf, 0, utils.EmptyString},
 	}, []utils.AccountBalancesBackup{
 		nil,

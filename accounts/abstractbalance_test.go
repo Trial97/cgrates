@@ -33,7 +33,7 @@ func TestABDebitUsageFromConcretes(t *testing.T) {
 	aB := &abstractBalance{
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:   "CB1",
 					Type: utils.MetaConcrete,
 					Opts: map[string]interface{}{
@@ -48,7 +48,7 @@ func TestABDebitUsageFromConcretes(t *testing.T) {
 				},
 			},
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:   "CB2",
 					Type: utils.MetaConcrete,
 					Opts: map[string]interface{}{
@@ -122,7 +122,7 @@ func TestABDebitUsageFromConcretes(t *testing.T) {
 
 func TestABDebitAbstracts(t *testing.T) {
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "AB1",
 			Type: utils.MetaAbstract,
 			CostIncrements: []*utils.CostIncrement{
@@ -134,7 +134,7 @@ func TestABDebitAbstracts(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:   "CB1",
 					Type: utils.MetaConcrete,
 					UnitFactors: []*utils.UnitFactor{
@@ -208,7 +208,7 @@ func TestABDebitAbstracts(t *testing.T) {
 func TestABCost0WithConcrete(t *testing.T) {
 	// consume units only from abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -221,7 +221,7 @@ func TestABCost0WithConcrete(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -246,7 +246,7 @@ func TestABCost0WithConcrete(t *testing.T) {
 func TestABCost0WithoutConcrete(t *testing.T) {
 	// consume units only from abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -273,7 +273,7 @@ func TestABCost0WithoutConcrete(t *testing.T) {
 func TestABCost0Exceed(t *testing.T) {
 	// consume more units that has an abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -286,7 +286,7 @@ func TestABCost0Exceed(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -311,7 +311,7 @@ func TestABCost0Exceed(t *testing.T) {
 func TestABCost0ExceedWithoutConcrete(t *testing.T) {
 	// consume more units that has an abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -338,7 +338,7 @@ func TestABCost0ExceedWithoutConcrete(t *testing.T) {
 func TestABCost0WithUnlimitedWithConcrete(t *testing.T) {
 	// consume more units that has an abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -354,7 +354,7 @@ func TestABCost0WithUnlimitedWithConcrete(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -379,7 +379,7 @@ func TestABCost0WithUnlimitedWithConcrete(t *testing.T) {
 func TestABCost0WithLimit(t *testing.T) {
 	// consume more units that has an abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -409,7 +409,7 @@ func TestABCost0WithLimit(t *testing.T) {
 func TestABCost0WithLimitWithConcrete(t *testing.T) {
 	// consume more units that has an abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -425,7 +425,7 @@ func TestABCost0WithLimitWithConcrete(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -450,7 +450,7 @@ func TestABCost0WithLimitWithConcrete(t *testing.T) {
 func TestABCost0WithLimitExceed(t *testing.T) {
 	// consume more units that has an abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -480,7 +480,7 @@ func TestABCost0WithLimitExceed(t *testing.T) {
 func TestABCost0WithLimitExceedWithConcrete(t *testing.T) {
 	// consume more units that has an abstract balance
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -496,7 +496,7 @@ func TestABCost0WithLimitExceedWithConcrete(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -522,7 +522,7 @@ func TestDebitUsageFiltersError(t *testing.T) {
 	cfg := config.NewDefaultCGRConfig()
 	filters := engine.NewFilterS(cfg, nil, nil)
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:        "ID_TEST",
 			Type:      utils.MetaAbstract,
 			FilterIDs: []string{"*string:*~req.Usage:10s"},
@@ -559,7 +559,7 @@ func TestDebitUsageFiltersError(t *testing.T) {
 
 func TestDebitUsageBalanceLimitErrors(t *testing.T) {
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "ID_TEST",
 			Type: utils.MetaAbstract,
 			Opts: map[string]interface{}{
@@ -604,7 +604,7 @@ func TestDebitUsageUnitFactorsErrors(t *testing.T) {
 	cfg := config.NewDefaultCGRConfig()
 	filters := engine.NewFilterS(cfg, nil, nil)
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "ID_TEST",
 			Type: utils.MetaAbstract,
 			UnitFactors: []*utils.UnitFactor{
@@ -648,7 +648,7 @@ func TestDebitUsageCostIncrementError(t *testing.T) {
 	cfg := config.NewDefaultCGRConfig()
 	filters := engine.NewFilterS(cfg, nil, nil)
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:   "ID_TEST",
 			Type: utils.MetaAbstract,
 			CostIncrements: []*utils.CostIncrement{
@@ -688,7 +688,7 @@ func TestDebitUsageCostIncrementError(t *testing.T) {
 func TestABCost(t *testing.T) {
 	// debit 10 seconds with cost of 0.1 per second
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -701,7 +701,7 @@ func TestABCost(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -730,7 +730,7 @@ func TestABCostWithFiltersNotMatch(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	// we expect to receive an error because it will try calculate the cost from rates
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -744,7 +744,7 @@ func TestABCostWithFiltersNotMatch(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -773,7 +773,7 @@ func TestABCostWithFilters(t *testing.T) {
 	dm := engine.NewDataManager(data, config.CgrConfig().CacheCfg(), nil)
 	filterS := engine.NewFilterS(cfg, nil, dm)
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -787,7 +787,7 @@ func TestABCostWithFilters(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -819,7 +819,7 @@ func TestABCostWithFilters(t *testing.T) {
 func TestABCostExceed(t *testing.T) {
 	// debit 70 seconds with cost of 0.1 per second
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -832,7 +832,7 @@ func TestABCostExceed(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -857,7 +857,7 @@ func TestABCostExceed(t *testing.T) {
 func TestABCostUnlimitedExceed(t *testing.T) {
 	// debit 70 seconds with cost of 0.1 per second
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -873,7 +873,7 @@ func TestABCostUnlimitedExceed(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -898,7 +898,7 @@ func TestABCostUnlimitedExceed(t *testing.T) {
 func TestABCostLimit(t *testing.T) {
 	// debit 70 seconds with cost of 0.1 per second
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -914,7 +914,7 @@ func TestABCostLimit(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -939,7 +939,7 @@ func TestABCostLimit(t *testing.T) {
 func TestABCostLimitExceed(t *testing.T) {
 	// debit 70 seconds with cost of 0.1 per second
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -955,7 +955,7 @@ func TestABCostLimitExceed(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(10, 0),
@@ -980,7 +980,7 @@ func TestABCostLimitExceed(t *testing.T) {
 func TestABCostNotEnoughConcrete(t *testing.T) {
 	// debit 55 seconds with cost of 0.1 per second
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -993,7 +993,7 @@ func TestABCostNotEnoughConcrete(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(5, 0),
@@ -1018,7 +1018,7 @@ func TestABCostNotEnoughConcrete(t *testing.T) {
 func TestABCostMultipleConcrete(t *testing.T) {
 	// debit 55 seconds with cost of 0.1 per second
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -1031,14 +1031,14 @@ func TestABCostMultipleConcrete(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB1",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(5, 0),
 				},
 			},
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB2",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(5, 0),
@@ -1065,7 +1065,7 @@ func TestABCostMultipleConcrete(t *testing.T) {
 func TestABCostMultipleConcreteUnlimited(t *testing.T) {
 	// debit 55 seconds with cost of 0.1 per second
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "AB_COST_0",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(time.Duration(60*time.Second)), 0), // 1 Minute
@@ -1081,14 +1081,14 @@ func TestABCostMultipleConcreteUnlimited(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB1",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(5, 0),
 				},
 			},
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB2",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(5, 0),
@@ -1119,7 +1119,7 @@ func TestAMCostWithUnitFactor(t *testing.T) {
 	filterS := engine.NewFilterS(cfg, nil, dm)
 
 	aB := &abstractBalance{
-		blnCfg: &utils.Balance{
+		blnCfg: &utils.BalanceProfile{
 			ID:    "ID_TEST",
 			Type:  utils.MetaAbstract,
 			Units: utils.NewDecimal(int64(60*time.Second), 0),
@@ -1137,7 +1137,7 @@ func TestAMCostWithUnitFactor(t *testing.T) {
 		},
 		cncrtBlncs: []*concreteBalance{
 			{
-				blnCfg: &utils.Balance{
+				blnCfg: &utils.BalanceProfile{
 					ID:    "CB1",
 					Type:  utils.MetaConcrete,
 					Units: utils.NewDecimal(50, 0),

@@ -31,7 +31,7 @@ func cloneUnitsFromConcretes(cBs []*concreteBalance) (clnedUnts []*utils.Decimal
 	}
 	clnedUnts = make([]*utils.Decimal, len(cBs))
 	for i := range cBs {
-		clnedUnts[i] = cBs[i].blnCfg.Units.Clone()
+		clnedUnts[i] = cBs[i].units.Clone()
 	}
 	return
 }
@@ -39,20 +39,21 @@ func cloneUnitsFromConcretes(cBs []*concreteBalance) (clnedUnts []*utils.Decimal
 // restoreUnitsFromClones will restore the units from the clones
 func restoreUnitsFromClones(cBs []*concreteBalance, clnedUnts []*utils.Decimal) {
 	for i, clnedUnt := range clnedUnts {
-		cBs[i].blnCfg.Units.Big = clnedUnt.Big
+		cBs[i].units.Big = clnedUnt.Big
 	}
 }
 
 // newConcreteBalance constructs a concreteBalanceOperator
-func newConcreteBalanceOperator(blnCfg *utils.Balance,
+func newConcreteBalanceOperator(blnCfg *utils.BalanceProfile, units *utils.Decimal,
 	fltrS *engine.FilterS, connMgr *engine.ConnManager,
 	attrSConns, rateSConns []string) balanceOperator {
-	return &concreteBalance{blnCfg, fltrS, connMgr, attrSConns, rateSConns}
+	return &concreteBalance{blnCfg, units, fltrS, connMgr, attrSConns, rateSConns}
 }
 
 // concreteBalance is the operator for *concrete balance type
 type concreteBalance struct {
-	blnCfg  *utils.Balance
+	blnCfg  *utils.BalanceProfile
+	units   *utils.Decimal
 	fltrS   *engine.FilterS
 	connMgr *engine.ConnManager
 	attrSConns,
@@ -118,17 +119,17 @@ func (cB *concreteBalance) debitConcretes(usage *decimal.Big,
 		return
 	}
 	if blncLmt != nil && blncLmt.Big.Cmp(decimal.New(0, 0)) != 0 {
-		cB.blnCfg.Units.Big = utils.SubstractBig(cB.blnCfg.Units.Big, blncLmt.Big)
+		cB.units.Big = utils.SubstractBig(cB.units.Big, blncLmt.Big)
 		hasLmt = true
 	}
 	var dbted *decimal.Big
-	if cB.blnCfg.Units.Big.Cmp(usage) <= 0 && blncLmt != nil { // balance smaller than debit and limited
-		dbted = cB.blnCfg.Units.Big
-		cB.blnCfg.Units.Big = blncLmt.Big
+	if cB.units.Big.Cmp(usage) <= 0 && blncLmt != nil { // balance smaller than debit and limited
+		dbted = cB.units.Big
+		cB.units.Big = blncLmt.Big
 	} else {
-		cB.blnCfg.Units.Big = utils.SubstractBig(cB.blnCfg.Units.Big, usage)
+		cB.units.Big = utils.SubstractBig(cB.units.Big, usage)
 		if hasLmt { // put back the limit
-			cB.blnCfg.Units.Big = utils.SumBig(cB.blnCfg.Units.Big, blncLmt.Big)
+			cB.units.Big = utils.SumBig(cB.units.Big, blncLmt.Big)
 		}
 		dbted = usage
 	}

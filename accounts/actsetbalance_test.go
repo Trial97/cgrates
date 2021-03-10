@@ -63,7 +63,7 @@ func TestActSetAccountBalance(t *testing.T) {
 	expectedAcc := &utils.AccountProfile{
 		Tenant: "cgrates.org",
 		ID:     acntID,
-		Balances: map[string]*utils.Balance{
+		Balances: map[string]*utils.BalanceProfile{
 			"Concrete1": {
 				ID:    "Concrete1",
 				Type:  utils.MetaConcrete,
@@ -195,9 +195,9 @@ func TestActSetAccountFields(t *testing.T) {
 }
 
 func TestActSetBalanceFields(t *testing.T) {
-	bal := &utils.Balance{}
+	bal := &utils.BalanceProfile{}
 
-	expectedBal := &utils.Balance{
+	expectedBal := &utils.BalanceProfile{
 		ID:        "TestActSetBalanceFields",
 		FilterIDs: []string{"*string:~*req.ToR:*sms"},
 		Weights: []*utils.DynamicWeight{
